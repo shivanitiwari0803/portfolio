@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { Briefcase } from "lucide-react";
+import { EASE_APPLE, SPRING_SMOOTH } from "@/lib/motion";
 
 interface ExperienceItem {
   role: string;
@@ -36,11 +37,7 @@ export default function Experience() {
     offset: ["start center", "end center"],
   });
 
-  const scaleY = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
+  const scaleY = useSpring(scrollYProgress, SPRING_SMOOTH);
 
   return (
     <section
@@ -96,7 +93,7 @@ export default function Experience() {
                 initial={{ opacity: 0, x: isEven ? -40 : 40 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
+                transition={{ duration: 0.8, ease: EASE_APPLE }}
                 className={`w-full md:w-1/2 pl-12 md:pl-0 ${
                   isEven ? "md:pr-12 md:text-right" : "md:pl-12"
                 }`}

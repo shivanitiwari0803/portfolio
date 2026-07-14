@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Image from "next/image";
+import { EASE_APPLE, SPRING_SMOOTH } from "@/lib/motion";
 
 interface Project {
   title: string;
@@ -19,19 +20,9 @@ const PROJECTS_DATA: Project[] = [
   {
     title: "Arena AI",
     category: "AI Model Comparison Platform",
-    description:
-      "Built a full-stack AI platform where Mistral and Cohere compete on the same prompt with real-time responses. Developed an automated 0–10 scoring engine evaluating relevance, accuracy, and clarity, with intelligent winner selection. Reduced response latency by 40–60% through parallel API orchestration, achieving 1–3 second response times.",
-    image: "/projects/project_arena.png",
-    tags: [
-      "Next.js",
-      "React",
-      "Node.js",
-      "Express.js",
-      "Mistral AI",
-      "Cohere API",
-      "Tailwind CSS",
-      "Vercel",
-    ],
+    description: "Built a full-stack AI platform where Mistral and Cohere compete on the same prompt with real-time responses. Developed an automated 0–10 scoring engine evaluating relevance, accuracy, and clarity, with intelligent winner selection. Reduced response latency by 40–60% through parallel API orchestration, achieving 1–3 second response times.",
+    image: "/project_arena.png",
+    tags: ["Next.js", "React", "Node.js", "Express.js", "Mistral AI", "Cohere API", "Tailwind CSS", "Vercel"],
     github: "https://github.com/shivanitwr0803",
     live: "https://ai-battle-arena-eta.vercel.app/login",
   },
@@ -44,11 +35,11 @@ function ProjectCard({ project }: { project: Project }) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   
-  const mouseXSpring = useSpring(x, { stiffness: 150, damping: 25 });
-  const mouseYSpring = useSpring(y, { stiffness: 150, damping: 25 });
+  const mouseXSpring = useSpring(x, SPRING_SMOOTH);
+  const mouseYSpring = useSpring(y, SPRING_SMOOTH);
   
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [8, -8]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [-8, 8]);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [6, -6]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [-6, 6]);
   
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = cardRef.current?.getBoundingClientRect();
@@ -80,10 +71,10 @@ function ProjectCard({ project }: { project: Project }) {
         rotateY,
         transformStyle: "preserve-3d",
       }}
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
+      transition={{ duration: 1.0, ease: EASE_APPLE }}
       className="group relative flex flex-col md:grid md:grid-cols-12 gap-8 p-6 md:p-8 rounded-3xl glass-panel hover:border-white/10 transition-colors duration-500 cursor-pointer overflow-hidden"
     >
       {/* Ambient background glow inside card */}

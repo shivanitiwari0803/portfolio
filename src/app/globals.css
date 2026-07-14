@@ -44,6 +44,11 @@ html {
 
 body {
   background-color: #000000;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.005) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.005) 1px, transparent 1px);
+  background-size: 24px 24px, 96px 96px, 96px 96px;
   color: #ffffff;
   font-family: var(--font-inter), sans-serif;
   overflow-x: hidden;
@@ -134,3 +139,27 @@ html.lenis {
 .mask-gradient {
   mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
 }
+
+/* Premium Button & Hover glow */
+.premium-btn-glow {
+  position: relative;
+  z-index: 1;
+}
+
+.premium-btn-glow::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(circle 80px at var(--btn-x, 50%) var(--btn-y, 50%), rgba(251, 191, 36, 0.4), transparent 80%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: -1;
+  border: 1px solid rgba(251, 191, 36, 0.5);
+}
+
+.premium-btn-glow:hover::after {
+  opacity: 1;
+}
+
