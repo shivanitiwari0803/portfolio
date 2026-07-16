@@ -1,3 +1,3 @@
-import SkillsPlayground from "./SkillsPlayground";
+import SkillsSection from "./SkillsSection";
 
-export default SkillsPlayground;
+export default SkillsSection;
