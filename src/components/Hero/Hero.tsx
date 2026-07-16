@@ -5,6 +5,7 @@ import { HeroBackground } from "./HeroBackground";
 import { HeroContent } from "./HeroContent";
 import { ScrollIndicator } from "./ScrollIndicator";
 import { useHeroAnimations } from "./useHeroAnimations";
+import { HeroRunner } from "./HeroRunner";
 
 export default function Hero() {
   // Main section container ref
@@ -17,6 +18,7 @@ export default function Hero() {
   const descRef = useRef<HTMLParagraphElement>(null);
   const ctasRef = useRef<HTMLDivElement>(null);
   const socialsRef = useRef<HTMLDivElement>(null);
+  const pikachuRef = useRef<HTMLDivElement>(null);
 
   // Background layer refs for parallax scrolling
   const particlesRef = useRef<HTMLDivElement>(null);
@@ -35,6 +37,7 @@ export default function Hero() {
     particlesRef,
     blobsRef,
     gridRef,
+    pikachuRef,
   });
 
   // Scroll to helper
@@ -58,6 +61,14 @@ export default function Hero() {
         blobsRef={blobsRef}
         gridRef={gridRef}
       />
+
+      {/* Pikachu Running Mascot Background Layer (z-10, behind content but above background) */}
+      <div 
+        ref={pikachuRef} 
+        className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-hidden transform-gpu"
+      >
+        <HeroRunner />
+      </div>
 
       {/* Mask-animated Hero Content Overlay */}
       <HeroContent

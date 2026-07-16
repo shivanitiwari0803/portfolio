@@ -2,251 +2,227 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
-import { 
-  Globe, 
-  Moon, 
-  Orbit, 
-  Magnet, 
-  Sparkles 
-} from "lucide-react";
 import { skillsData } from "@/data/skillsData";
-import { PhysicsWorld } from "./PhysicsWorld";
-import { ParticleBackground } from "./ParticleBackground";
 
-type CategoryType = "all" | "frontend" | "backend" | "languages" | "database" | "ai" | "tools" | "optimization";
+type CategoryType = "languages" | "frontend" | "backend" | "databases" | "ai" | "tools" | "deployment";
+
+interface FilterOption {
+  id: CategoryType;
+  label: string;
+}
 
 export const SkillsSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const controlPanelRef = useRef<HTMLDivElement>(null);
-  const sandboxRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
-  // States
-  const [activeCategory, setActiveCategory] = useState<CategoryType>("all");
-  const [gravityMode, setGravityMode] = useState<"earth" | "moon" | "zero">("earth");
-  const [magnetMode, setMagnetMode] = useState(false);
-  const [shakeTrigger, setShakeTrigger] = useState(0);
-  const [device, setDevice] = useState<"desktop" | "tablet" | "mobile">("desktop");
+  // Active Category State
+  const [activeCategory, setActiveCategory] = useState<CategoryType>("languages");
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const hasEnteredRef = useRef(false);
 
-  // Determine viewport width on mount to filter card counts
-  useEffect(() => {
-    const handleResize = () => {
-      const w = window.innerWidth;
-      if (w < 768) {
-        setDevice("mobile");
-      } else if (w < 1024) {
-        setDevice("tablet");
-      } else {
-        setDevice("desktop");
-      }
-    };
-    
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const filters: FilterOption[] = [
+    { id: "languages", label: "Languages" },
+    { id: "frontend", label: "Frontend" },
+    { id: "backend", label: "Backend" },
+    { id: "databases", label: "Databases" },
+    { id: "ai", label: "AI & LLMs" },
+    { id: "tools", label: "Tools & Platforms" },
+    { id: "deployment", label: "Deployment & Optimization" },
+  ];
 
-  // GSAP Entrance Animations
+  // Filtered skills list
+  const activeSkills = skillsData.filter((skill) => skill.category === activeCategory);
+
+  // 1. Initial Reveal Entrance (runs once on intersection)
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        defaults: { ease: "power3.out", duration: 1.0 },
-      });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasEnteredRef.current) {
+            hasEnteredRef.current = true;
 
-      tl.fromTo(
-        headerRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1.1 }
-      )
-      .fromTo(
-        ".filter-btn",
-        { opacity: 0, y: 15 },
-        { opacity: 1, y: 0, duration: 0.8, stagger: 0.06 },
-        "-=0.7"
-      )
-      .fromTo(
-        controlPanelRef.current,
-        { opacity: 0, scale: 0.96 },
-        { opacity: 1, scale: 1, duration: 0.9 },
-        "-=0.6"
-      )
-      .fromTo(
-        sandboxRef.current,
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 1.2 },
-        "-=0.5"
-      );
-    }, el);
+            const tl = gsap.timeline({
+              defaults: { ease: "power3.out", duration: 0.8 },
+            });
 
-    return () => ctx.revert();
+            tl.fromTo(
+              headerRef.current,
+              { opacity: 0, y: 30 },
+              { opacity: 1, y: 0, duration: 1.0 }
+            )
+            .fromTo(
+              ".filter-pill",
+              { opacity: 0, y: 15 },
+              { opacity: 1, y: 0, duration: 0.7, stagger: 0.05 },
+              "-=0.6"
+            )
+            .fromTo(
+              ".skill-card-pill",
+              { opacity: 0, y: 22, scale: 0.95 },
+              { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.035 },
+              "-=0.5"
+            );
+          }
+        });
+      },
+      { threshold: 0.08 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
-  // Filter skills based on Category + Screen Sizing constraints
-  const filteredSkills = skillsData.filter((skill) => {
-    // 1. Sizing optimizations
-    if (device === "mobile" && !skill.mobile) return false;
-    if (device === "tablet" && !skill.tablet) return false;
+  // 2. Staggered Filter Transition (Slide Out -> Update State -> Slide In)
+  const handleCategoryChange = (newCat: CategoryType) => {
+    if (newCat === activeCategory || isTransitioning) return;
+    setIsTransitioning(true);
 
-    // 2. Active Category selection
-    if (activeCategory === "all") return true;
-    return skill.category === activeCategory;
-  });
-
-  const categories: { id: CategoryType; label: string }[] = [
-    { id: "all", label: "All" },
-    { id: "frontend", label: "Frontend" },
-    { id: "backend", label: "Backend" },
-    { id: "languages", label: "Languages" },
-    { id: "database", label: "Database" },
-    { id: "ai", label: "AI & LLMs" },
-    { id: "tools", label: "Tools" },
-    { id: "optimization", label: "Optimization" },
-  ];
-
-  const handleShake = () => {
-    setShakeTrigger((prev) => prev + 1);
-  };
-
-  const handleCategoryChange = (catId: CategoryType) => {
-    if (catId === activeCategory) return;
-
-    // Staggered fade out of existing cards using GSAP before updating state
-    const cards = gsap.utils.toArray(".physics-card");
+    const cards = gsap.utils.toArray(".skill-card-pill");
     if (cards.length > 0) {
+      // Fade and slide out current cards
       gsap.to(cards, {
         opacity: 0,
-        scale: 0.85,
-        y: "+=20",
-        duration: 0.2,
+        y: 15,
+        scale: 0.95,
+        duration: 0.22,
         stagger: 0.012,
         ease: "power2.in",
         onComplete: () => {
-          setActiveCategory(catId);
+          setActiveCategory(newCat);
         },
       });
     } else {
-      setActiveCategory(catId);
+      setActiveCategory(newCat);
     }
   };
 
+  // 3. Staggered entrance for newly loaded cards
+  useEffect(() => {
+    // Only run if the initial reveal animation has already played
+    if (!hasEnteredRef.current) return;
+
+    // Direct animate-in loop for the new active list
+    gsap.fromTo(
+      ".skill-card-pill",
+      { opacity: 0, y: 18, scale: 0.96 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.44,
+        stagger: 0.02,
+        ease: "power3.out",
+        onComplete: () => {
+          setIsTransitioning(false);
+        },
+      }
+    );
+  }, [activeCategory]);
+
   return (
-    <section 
+    <section
       id="skills"
       ref={sectionRef}
-      className="relative py-28 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full select-none overflow-hidden bg-black flex flex-col gap-12"
+      className="relative py-28 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full select-none bg-[#050505] flex flex-col gap-12"
     >
-      {/* Header Container */}
-      <div 
+      {/* Header Block */}
+      <div
         ref={headerRef}
-        className="flex flex-col gap-2.5 text-center items-center max-w-2xl mx-auto"
+        className="opacity-0 flex flex-col gap-3 text-center items-center max-w-2xl mx-auto"
       >
         <span className="text-xs font-semibold tracking-widest text-[#FFD84D] uppercase font-mono">
           02 / Capabilities
         </span>
-        <h2 className="text-3xl md:text-5xl lg:text-[3.25rem] font-display font-bold tracking-tight text-white uppercase">
-          Play With My Skills
+        <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight text-white uppercase">
+          Tech Stack
         </h2>
         <p className="text-sm md:text-base text-white/50 leading-relaxed font-light mt-1">
-          Every card represents a technology I use. Grab, throw, and interact with them in the sandbox container.
+          Technologies I use to build modern, scalable and high-performance applications.
         </p>
       </div>
 
-      {/* Control panel and filters */}
-      <div className="flex flex-col gap-6 w-full z-20">
-        {/* Category Filters Bar */}
-        <div className="flex flex-wrap gap-2 justify-center border-b border-white/5 pb-5">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => handleCategoryChange(cat.id)}
-              className={`filter-btn px-4 py-2 rounded-full text-xs font-medium tracking-wide border transition-all duration-300 transform-gpu cursor-pointer ${
-                activeCategory === cat.id
-                  ? "text-black bg-[#FFD84D] border-[#FFD84D] shadow-[0_4px_16px_rgba(255,216,77,0.18)]"
-                  : "text-white/60 hover:text-white bg-white/[0.02] border-white/5 hover:border-white/15"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Physics Control Dashboard */}
-        <div 
-          ref={controlPanelRef}
-          className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-white/[0.01] border border-white/5 rounded-2xl p-4 max-w-3xl mx-auto w-full"
-        >
-          {/* Gravity Toggles */}
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] text-white/40 uppercase tracking-widest font-mono mr-1">Gravity:</span>
-            {[
-              { id: "earth", label: "Earth", icon: <Globe size={13} /> },
-              { id: "moon", label: "Moon", icon: <Moon size={13} /> },
-              { id: "zero", label: "Zero-G", icon: <Orbit size={13} /> },
-            ].map((grav) => (
-              <button
-                key={grav.id}
-                onClick={() => setGravityMode(grav.id as "earth" | "moon" | "zero")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-300 cursor-pointer border ${
-                  gravityMode === grav.id
-                    ? "text-[#FFD84D] border-[#FFD84D]/30 bg-[#FFD84D]/5"
-                    : "text-white/50 border-transparent hover:text-white bg-white/[0.02]"
-                }`}
-              >
-                {grav.icon}
-                <span>{grav.label}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Magnet and Shake Panel */}
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] text-white/40 uppercase tracking-widest font-mono mr-1">Controls:</span>
-            
-            {/* Magnet Toggle */}
-            <button
-              onClick={() => setMagnetMode(!magnetMode)}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-300 cursor-pointer ${
-                magnetMode
-                  ? "text-[#FFD84D] border-[#FFD84D]/30 bg-[#FFD84D]/5"
-                  : "text-white/50 border-transparent hover:text-white bg-white/[0.02]"
-              }`}
-            >
-              <Magnet size={13} className={magnetMode ? "animate-pulse text-[#FFD84D]" : ""} />
-              <span>Attraction {magnetMode ? "On" : "Off"}</span>
-            </button>
-
-            {/* Shake Button */}
-            <button
-              onClick={handleShake}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 hover:border-[#FFD84D]/20 text-white/60 hover:text-white transition-all duration-300 cursor-pointer"
-            >
-              <Sparkles size={13} className="text-[#FFD84D]" />
-              <span>Shake Arena</span>
-            </button>
-          </div>
-        </div>
+      {/* Categories Filter Bar */}
+      <div className="flex flex-wrap gap-2.5 justify-center border-b border-white/5 pb-6 z-20">
+        {filters.map((filter) => (
+          <button
+            key={filter.id}
+            onClick={() => handleCategoryChange(filter.id)}
+            className={`filter-pill px-4.5 py-2.5 rounded-full text-xs font-semibold tracking-wide border transition-all duration-300 transform-gpu cursor-pointer relative ${
+              activeCategory === filter.id
+                ? "text-black bg-[#FFD84D] border-[#FFD84D] shadow-[0_4px_16px_rgba(255,216,77,0.18)]"
+                : "text-white/60 hover:text-white bg-white/[0.02] border-white/5 hover:border-white/12"
+            }`}
+          >
+            {filter.label}
+          </button>
+        ))}
       </div>
 
-      {/* Physics World Arena wrapper */}
-      <div 
-        ref={sandboxRef}
-        className="relative w-full z-10"
+      {/* Skills Grid */}
+      <div
+        ref={gridRef}
+        className="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto w-full z-10 min-h-[160px]"
       >
-        {/* Subtle glowing dots background field */}
-        <ParticleBackground />
-        
-        {/* The Sandbox viewport rendering Matter.js rigid bodies */}
-        <PhysicsWorld
-          skills={filteredSkills}
-          isMobile={device === "mobile"}
-          gravityMode={gravityMode}
-          magnetMode={magnetMode}
-          shakeTrigger={shakeTrigger}
-        />
+        {activeSkills.map((skill) => (
+          <div
+            key={skill.id}
+            className="skill-card-pill px-6 py-4 flex items-center gap-4 rounded-[20px] border border-white/5 bg-[#0a0a0a]/80 shadow-md transform-gpu opacity-0 select-none"
+            style={{ willChange: "transform, opacity" }}
+          >
+            {/* Tech Logo with raw brand color */}
+            <span className="skill-logo flex items-center justify-center w-8 h-8 text-current">
+              {skill.icon}
+            </span>
+
+            {/* Tech Name */}
+            <span className="skill-name font-sans font-bold text-sm tracking-wide text-white/90">
+              {skill.name}
+            </span>
+          </div>
+        ))}
       </div>
+
+      {/* Styled Hover Micro-interactions & GPU optimizations */}
+      <style jsx global>{`
+        .skill-card-pill {
+          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                      border-color 0.35s ease,
+                      box-shadow 0.35s ease;
+          cursor: pointer;
+        }
+
+        .skill-card-pill:hover {
+          transform: translateY(-4px) rotate(1.2deg);
+          border-color: rgba(255, 216, 77, 0.35) !important;
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.75), 0 0 20px rgba(255, 216, 77, 0.12) !important;
+        }
+
+        .skill-logo {
+          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .skill-logo svg {
+          width: 1.85rem;
+          height: 1.85rem;
+        }
+
+        .skill-card-pill:hover .skill-logo {
+          transform: scale(1.16) rotate(6deg);
+        }
+
+        .skill-name {
+          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .skill-card-pill:hover .skill-name {
+          transform: translateX(3px);
+          color: #ffffff;
+        }
+      `}</style>
     </section>
   );
 };

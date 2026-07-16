@@ -71,7 +71,7 @@ export const HeroContent: React.FC<HeroContentProps> = ({
       >
         <button
           onClick={onScrollToProjects}
-          className="cta-button-primary group flex items-center gap-2.5 px-8 py-4 bg-[#FFD84D] hover:bg-[#ffe17d] text-black font-semibold text-sm rounded-full transition-all duration-300 transform-gpu"
+          className="cta-button-primary group flex items-center gap-2.5 px-8 py-4 bg-[#FFD84D] hover:bg-[#ffe17d] text-black font-semibold text-sm rounded-full transition-all duration-300 transform-gpu cursor-pointer"
           style={{
             boxShadow: "0 4px 20px rgba(255, 216, 77, 0.15)",
           }}
@@ -86,7 +86,7 @@ export const HeroContent: React.FC<HeroContentProps> = ({
         <a
           href="/resume/Shivani_Tiwari_Software_Engineer_Resume.pdf"
           download="Shivani_Tiwari_Resume.pdf"
-          className="cta-button-secondary flex items-center gap-2 px-8 py-4 bg-white/[0.03] hover:bg-white/[0.08] text-white font-semibold text-sm rounded-full border border-white/10 transition-all duration-300 transform-gpu"
+          className="cta-button-secondary flex items-center gap-2 px-8 py-4 bg-white/[0.03] hover:bg-white/[0.08] text-white font-semibold text-sm rounded-full border border-white/10 transition-all duration-300 transform-gpu cursor-pointer"
         >
           Download Resume
           <Download size={15} />
@@ -166,3 +166,4 @@ export const HeroContent: React.FC<HeroContentProps> = ({
     </div>
   );
 };
+export default HeroContent;

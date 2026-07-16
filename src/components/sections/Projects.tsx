@@ -21,7 +21,7 @@ const PROJECTS_DATA: Project[] = [
     title: "Arena AI",
     category: "AI Model Comparison Platform",
     description: "Built a full-stack AI platform where Mistral and Cohere compete on the same prompt with real-time responses. Developed an automated 0–10 scoring engine evaluating relevance, accuracy, and clarity, with intelligent winner selection. Reduced response latency by 40–60% through parallel API orchestration, achieving 1–3 second response times.",
-    image: "/project_arena.png",
+    image: "/projects/project_arena.png",
     tags: ["Next.js", "React", "Node.js", "Express.js", "Mistral AI", "Cohere API", "Tailwind CSS", "Vercel"],
     github: "https://github.com/shivanitwr0803",
     live: "https://ai-battle-arena-eta.vercel.app/login",

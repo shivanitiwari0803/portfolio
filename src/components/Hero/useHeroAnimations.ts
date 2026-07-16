@@ -18,6 +18,7 @@ interface UseHeroAnimationsProps {
   particlesRef: React.RefObject<HTMLDivElement | null>;
   blobsRef: React.RefObject<HTMLDivElement | null>;
   gridRef: React.RefObject<HTMLDivElement | null>;
+  pikachuRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export const useHeroAnimations = ({
@@ -31,6 +32,7 @@ export const useHeroAnimations = ({
   particlesRef,
   blobsRef,
   gridRef,
+  pikachuRef,
 }: UseHeroAnimationsProps) => {
   useEffect(() => {
     const container = containerRef.current;
@@ -44,6 +46,7 @@ export const useHeroAnimations = ({
       gsap.set(descRef.current, { opacity: 0, y: 20 });
       gsap.set(ctasRef.current, { opacity: 0, y: 20 });
       gsap.set(".social-icon", { opacity: 0, y: 15 });
+      gsap.set(pikachuRef.current, { opacity: 0, x: 45, scale: 0.95 });
 
       // 2. Entrance Timeline Choreography
       const entranceTimeline = gsap.timeline({
@@ -57,7 +60,7 @@ export const useHeroAnimations = ({
           { opacity: 0 },
           { opacity: 1, duration: 1.6, ease: "sine.inOut" }
         )
-        // Reveal masked headline letters (SplitText effect)
+        // Reveal masked headline letters
         .fromTo(
           ".line-inner",
           { yPercent: 104 },
@@ -75,6 +78,12 @@ export const useHeroAnimations = ({
           ".social-icon",
           { opacity: 1, y: 0, duration: 0.8, stagger: 0.08 },
           "-=0.65"
+        )
+        // Slide & fade in Pikachu illustration on the right
+        .to(
+          pikachuRef.current,
+          { opacity: 1, x: 0, scale: 1, duration: 1.3, ease: "power3.out" },
+          "-=1.2"
         );
 
       // 3. Scroll Pinning ScrollTrigger
@@ -89,7 +98,7 @@ export const useHeroAnimations = ({
       });
 
       // 4. Parallax Background & Content Scrubbing
-      // Blobs parallax - moves faster
+      // Blobs parallax
       gsap.to(blobsRef.current, {
         yPercent: -28,
         ease: "none",
@@ -102,7 +111,7 @@ export const useHeroAnimations = ({
         },
       });
 
-      // Particle Canvas parallax - moves medium
+      // Particle Canvas parallax
       gsap.to(particlesRef.current, {
         yPercent: -18,
         ease: "none",
@@ -115,7 +124,7 @@ export const useHeroAnimations = ({
         },
       });
 
-      // Grid parallax - moves very slow
+      // Grid parallax
       gsap.to(gridRef.current, {
         yPercent: -8,
         ease: "none",
@@ -128,7 +137,7 @@ export const useHeroAnimations = ({
         },
       });
 
-      // Main Text Content parallax - moves up faster and fades out
+      // Main Content parallax - moves up faster and fades out
       gsap.to(contentRef.current, {
         yPercent: -22,
         opacity: 0.15,
@@ -144,7 +153,7 @@ export const useHeroAnimations = ({
     }, container);
 
     return () => {
-      ctx.revert(); // Automatically kills all timelines and ScrollTriggers created inside context
+      ctx.revert();
     };
   }, [
     containerRef,
@@ -157,5 +166,6 @@ export const useHeroAnimations = ({
     particlesRef,
     blobsRef,
     gridRef,
+    pikachuRef,
   ]);
 };
