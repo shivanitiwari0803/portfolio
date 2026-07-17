@@ -4,6 +4,8 @@ import "./globals.css";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import CustomCursor from "@/components/ui/CustomCursor";
 import Navbar from "@/components/ui/Navbar";
+import LoadingScreen from "@/components/ui/LoadingScreen";
+import EasterEggs from "@/components/ui/EasterEggs";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -52,8 +54,11 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${bricolage.variable} scroll-smooth`}
     >
-      <body className="bg-black text-white antialiased min-h-screen selection:bg-accent/20 selection:text-accent">
+      <body className="bg-background text-white antialiased min-h-screen selection:bg-accent/20 selection:text-accent">
+        <LoadingScreen />
+        <EasterEggs />
         <SmoothScroll>
+
           <CustomCursor />
           <Navbar />
           <div className="glow-bg" />
@@ -65,3 +70,4 @@ export default function RootLayout({
     </html>
   );
 }
+

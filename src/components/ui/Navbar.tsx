@@ -22,7 +22,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      if (window.scrollY > 40) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -80,21 +80,21 @@ export default function Navbar() {
           transition={{ duration: 0.8, ease: EASE_APPLE }}
           className={`flex items-center justify-between w-full transition-all duration-500 ${
             isScrolled
-              ? "max-w-5xl px-8 py-3 rounded-full glass-capsule border border-white/10 bg-black/70 backdrop-blur-xl"
-              : "max-w-7xl px-8 py-5 bg-transparent"
+              ? "max-w-5xl px-8 py-3 rounded-full bg-surface-secondary/85 backdrop-blur-xl border border-accent/40 shadow-[0_4px_30px_rgba(0,0,0,0.6),0_0_20px_rgba(255,217,61,0.12)]"
+              : "max-w-7xl px-8 py-5 bg-transparent border-b border-transparent"
           }`}
         >
           {/* Logo */}
           <a
             href="#home"
             onClick={(e) => handleScrollTo(e, "#home")}
-            className="text-lg font-display font-extrabold tracking-tight text-white hover:text-accent transition-colors duration-300"
+            className="text-lg font-display font-extrabold tracking-tight text-white hover:text-accent transition-colors duration-300 flex items-center gap-1.5"
           >
-            SHIVANI<span className="text-accent">.</span>
+            SHIVANI<span className="text-accent">⚡</span>
           </a>
 
           {/* Desktop Nav Items */}
-          <div className={`hidden md:flex items-center gap-6 ${isScrolled ? "gap-4 text-sm" : "text-base"}`}>
+          <div className={`hidden md:flex items-center gap-8 ${isScrolled ? "gap-6 text-sm" : "text-base"}`}>
             {NAV_ITEMS.map((item) => {
               const isActive = activeSection === item.href.slice(1);
               return (
@@ -102,10 +102,20 @@ export default function Navbar() {
                   key={item.label}
                   href={item.href}
                   onClick={(e) => handleScrollTo(e, item.href)}
-                  className={`relative font-medium py-1 transition-colors duration-300 group ${
-                    isActive ? "text-accent" : "text-white/70 hover:text-white"
+                  className={`relative font-medium py-1 transition-all duration-300 flex items-center gap-1.5 group ${
+                    isActive ? "text-accent drop-shadow-[0_0_6px_rgba(255,217,61,0.6)]" : "text-white/70 hover:text-white"
                   }`}
                 >
+                  {/* Pokemon Menu style selector pointer */}
+                  {isActive && (
+                    <motion.span
+                      layoutId="activePointer"
+                      className="text-accent text-[11px] mr-0.5 animate-[pulse_1.5s_infinite]"
+                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                    >
+                      ▶
+                    </motion.span>
+                  )}
                   {item.label}
                   {isActive && (
                     <motion.div
@@ -125,7 +135,7 @@ export default function Navbar() {
             className="flex md:hidden p-2 text-white/80 hover:text-accent focus:outline-none transition-colors duration-300"
             aria-label="Toggle menu"
           >
-            {isOpen ? <X size={20} /> : <Menu size={20} />}
+            {isOpen ? <X size={20} className="text-accent" /> : <Menu size={20} />}
           </button>
         </motion.nav>
       </header>
@@ -138,7 +148,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4, ease: EASE_APPLE }}
-            className="fixed inset-0 z-40 bg-black/95 backdrop-blur-lg md:hidden flex flex-col justify-center items-center gap-8"
+            className="fixed inset-0 z-40 bg-surface-primary/98 backdrop-blur-lg md:hidden flex flex-col justify-center items-center gap-8 border-b border-accent/30"
           >
             {NAV_ITEMS.map((item, idx) => {
               const isActive = activeSection === item.href.slice(1);
@@ -151,10 +161,11 @@ export default function Navbar() {
                   key={item.label}
                   href={item.href}
                   onClick={(e) => handleScrollTo(e, item.href)}
-                  className={`text-2xl font-display font-medium transition-colors duration-300 ${
-                    isActive ? "text-accent" : "text-white/80 hover:text-white"
+                  className={`text-2xl font-display font-medium transition-colors duration-300 flex items-center gap-2 ${
+                    isActive ? "text-accent drop-shadow-[0_0_8px_rgba(255,217,61,0.5)]" : "text-white/80 hover:text-white"
                   }`}
                 >
+                  {isActive && <span className="text-accent text-sm animate-pulse">▶</span>}
                   {item.label}
                 </motion.a>
               );

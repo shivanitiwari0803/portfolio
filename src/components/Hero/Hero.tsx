@@ -53,7 +53,7 @@ export default function Hero() {
     <section
       id="home"
       ref={containerRef}
-      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#050505] z-10"
+      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-background z-0"
     >
       {/* Layered Background Parallax Elements */}
       <HeroBackground

@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { SkillItem } from "@/data/skillsData";
 import { usePhysics } from "@/hooks/usePhysics";
 import { PhysicsCard } from "./PhysicsCard";
-import { SkillModal } from "./SkillModal";
 
 interface PhysicsWorldProps {
   skills: SkillItem[];
@@ -37,8 +36,8 @@ export const PhysicsWorld: React.FC<PhysicsWorldProps> = ({
   const cardElementsRef = useRef<Map<string, HTMLDivElement>>(new Map());
   const sparksRef = useRef<SparkParticle[]>([]);
 
-  // Modal active item state
-  const [selectedSkill, setSelectedSkill] = useState<SkillItem | null>(null);
+  // State to track container dimensions for robust initialization
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   // Active skills lookup set (synchronized with incoming prop list)
   const activeSkillsSetRef = useRef<Set<string>>(new Set(skills.map((s) => s.id)));
@@ -94,42 +93,41 @@ export const PhysicsWorld: React.FC<PhysicsWorldProps> = ({
     }
   }, [shakeTrigger, applyShake]);
 
-  // 3. Sync and Re-initialize physics bodies on category filter change
+  // 3. Sync and Re-initialize physics bodies on category filter change or container resize
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // A. Remove all existing bodies from the world to prevent collisions with unmounted cards
-    clearSkillsBodies();
-
-    const width = container.clientWidth;
-    const height = container.clientHeight;
+    const { width, height } = dimensions;
     if (width === 0 || height === 0) return;
 
-    // B. Re-measure the new card DOM elements and register fresh Matter.js bodies
+    // A. Clear existing Matter.js bodies
+    clearSkillsBodies();
+
+    // B. Re-measure elements and register inside ceiling boundaries
     const initCardBodies = () => {
       skills.forEach((skill) => {
         const el = cardElementsRef.current.get(skill.id);
         if (el) {
-          const w = el.offsetWidth || 112;
-          const h = el.offsetHeight || 112;
+          const w = el.offsetWidth || 125;
+          const h = el.offsetHeight || 175;
 
-          // Spawn from random horizontal coordinates above the viewport
-          const x = Math.random() * (width - w - 40) + w / 2 + 20;
-          const y = -100 - Math.random() * 120; // Drop from above screen
+          // Scatter horizontally, spawn safely below the ceiling boundary
+          const x = Math.random() * (width - w - 60) + w / 2 + 30;
+          const y = 60 + Math.random() * 120; // Dropping inside the viewport
 
           registerCard(skill.id, x, y, w, h);
         }
       });
     };
 
-    // Wait a brief 50ms tick for React to finish mounting card DOM elements
-    const timer = setTimeout(initCardBodies, 50);
+    // Wait a brief 60ms tick for React layout update
+    const timer = setTimeout(initCardBodies, 60);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [skills, clearSkillsBodies, registerCard]);
+  }, [skills, dimensions, clearSkillsBodies, registerCard]);
 
   // 4. Render Tick Loop (Direct DOM updates + Canvas sparks drawing)
   useEffect(() => {
@@ -199,7 +197,7 @@ export const PhysicsWorld: React.FC<PhysicsWorldProps> = ({
     };
   }, [bodiesMapRef]);
 
-  // 5. Mount Sizing & Viewport Observers (stable, decoupled from active skills list)
+  // 5. Mount Sizing & Viewport Observers
   useEffect(() => {
     const container = containerRef.current;
     const canvas = canvasRef.current;
@@ -215,6 +213,7 @@ export const PhysicsWorld: React.FC<PhysicsWorldProps> = ({
 
       canvas.width = w;
       canvas.height = h;
+      setDimensions({ width: w, height: h });
       handleResize(w, h);
     });
 
@@ -243,20 +242,16 @@ export const PhysicsWorld: React.FC<PhysicsWorldProps> = ({
     };
   }, [handleResize, pausePhysics, resumePhysics]);
 
-  // Open modal on double click
-  const handleCardDoubleClick = useCallback((skill: SkillItem) => {
-    setSelectedSkill(skill);
-  }, []);
-
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[580px] md:h-[650px] bg-black/60 border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl touch-none select-none z-10"
-      style={{
-        backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.015) 1px, transparent 0)`,
-        backgroundSize: "32px 32px",
-      }}
+      className="relative w-full h-[540px] md:h-[620px] rounded-[2.5rem] overflow-hidden shadow-2xl touch-none select-none z-10 battle-arena-container border border-[#FFD93D]/30"
     >
+      {/* 1. Battle Arena background grids and overlays */}
+      <div className="absolute inset-0 z-0 battle-arena-bg" />
+      <div className="absolute inset-0 z-0 bg-radial-glow pointer-events-none" />
+      <div className="absolute inset-0 z-0 energy-line pointer-events-none" />
+
       {/* Canvas for Particle drawing */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-10" />
 
@@ -266,7 +261,6 @@ export const PhysicsWorld: React.FC<PhysicsWorldProps> = ({
           key={skill.id}
           skill={skill}
           isMobile={isMobile}
-          onDoubleClick={handleCardDoubleClick}
           cardRef={(el) => {
             if (el) {
               cardElementsRef.current.set(skill.id, el);
@@ -277,9 +271,41 @@ export const PhysicsWorld: React.FC<PhysicsWorldProps> = ({
         />
       ))}
 
-      {/* Double Click Expanded Skill Details Modal */}
-      <SkillModal skill={selectedSkill} onClose={() => setSelectedSkill(null)} />
+      <style jsx global>{`
+        /* Pokémon Battle Arena aesthetics */
+        .battle-arena-container {
+          box-shadow: 0 0 35px rgba(255, 217, 61, 0.06), inset 0 0 25px rgba(255, 217, 61, 0.03);
+        }
+
+        .battle-arena-bg {
+          background-color: #0b0b0b;
+          background-image: 
+            linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+          background-size: 32px 32px;
+        }
+
+        .bg-radial-glow {
+          background: radial-gradient(circle at center, rgba(255, 217, 61, 0.03) 0%, rgba(79, 195, 247, 0.02) 50%, transparent 100%);
+        }
+
+        /* Scanning energy line */
+        .energy-line {
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(255, 217, 61, 0.22), transparent);
+          animation: scan-arena 8s linear infinite;
+          will-change: transform;
+        }
+
+        @keyframes scan-arena {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(620px); }
+        }
+      `}</style>
     </div>
   );
 };
+
 export default PhysicsWorld;

@@ -86,16 +86,6 @@ export const useHeroAnimations = ({
           "-=1.2"
         );
 
-      // 3. Scroll Pinning ScrollTrigger
-      ScrollTrigger.create({
-        trigger: container,
-        start: "top top",
-        end: "+=65%", // Pins briefly for scroll interaction feedback
-        pin: true,
-        pinSpacing: false, // Subsequent components slide over hero (overlay parallax)
-        scrub: true,
-        invalidateOnRefresh: true,
-      });
 
       // 4. Parallax Background & Content Scrubbing
       // Blobs parallax

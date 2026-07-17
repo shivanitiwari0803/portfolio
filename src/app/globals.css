@@ -1,17 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #000000;
+  --color-background: #0A0A0A;
   --color-foreground: #ffffff;
   
-  --color-surface-primary: #050505;
-  --color-surface-secondary: #0a0a0a;
-  --color-surface-tertiary: #121212;
+  --color-surface-primary: #0A0A0A;
+  --color-surface-secondary: #111111;
+  --color-surface-tertiary: #171717;
   
-  --color-accent: #fbbf24;
-  --color-accent-hover: #f59e0b;
-  --color-accent-muted: rgba(251, 191, 36, 0.15);
-  --color-text-muted: #a3a3a3;
+  --color-accent: #FFD93D;
+  --color-accent-hover: #FFE17D;
+  --color-accent-muted: rgba(255, 217, 61, 0.15);
+  
+  --color-accent-blue: #4FC3F7;
+  --color-accent-blue-muted: rgba(79, 195, 247, 0.15);
+  
+  --color-success-green: #A5FF6A;
+  --color-text-muted: #9E9E9E;
   
   --font-sans: var(--font-inter), sans-serif;
   --font-display: var(--font-bricolage), sans-serif;
@@ -32,23 +37,23 @@
 }
 
 :root {
-  --background: #000000;
+  --background: #0A0A0A;
   --foreground: #ffffff;
 }
 
 html {
   scroll-behavior: smooth;
-  background-color: #000000;
+  background-color: #0A0A0A;
   color: #ffffff;
 }
 
 body {
-  background-color: #000000;
+  background-color: #0A0A0A;
   background-image: 
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(to right, rgba(255, 255, 255, 0.005) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.005) 1px, transparent 1px);
-  background-size: 24px 24px, 96px 96px, 96px 96px;
+    radial-gradient(circle at 50% 50%, rgba(255, 217, 61, 0.012) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255, 217, 61, 0.003) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 217, 61, 0.003) 1px, transparent 1px);
+  background-size: 32px 32px, 128px 128px, 128px 128px;
   color: #ffffff;
   font-family: var(--font-inter), sans-serif;
   overflow-x: hidden;
@@ -60,7 +65,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: #0A0A0A;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -69,28 +74,28 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #fbbf24;
+  background: #FFD93D;
 }
 
 /* Selection style */
 ::selection {
-  background-color: rgba(251, 191, 36, 0.2);
-  color: #fbbf24;
+  background-color: rgba(255, 217, 61, 0.2);
+  color: #FFD93D;
 }
 
 /* Glassmorphism Utilities */
 .glass-panel {
-  background: rgba(10, 10, 10, 0.7);
+  background: rgba(23, 23, 23, 0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .glass-capsule {
-  background: rgba(10, 10, 10, 0.75);
+  background: rgba(23, 23, 23, 0.7);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.05);
 }
 
@@ -128,7 +133,7 @@ html.lenis {
 
 /* Custom glow overlay background effect */
 .glow-bg {
-  background: radial-gradient(circle 800px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(251, 191, 36, 0.06), transparent 80%);
+  background: radial-gradient(circle 800px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 217, 61, 0.05), transparent 85%);
   pointer-events: none;
   position: fixed;
   inset: 0;
@@ -151,15 +156,16 @@ html.lenis {
   position: absolute;
   inset: -1px;
   border-radius: inherit;
-  background: radial-gradient(circle 80px at var(--btn-x, 50%) var(--btn-y, 50%), rgba(251, 191, 36, 0.4), transparent 80%);
+  background: radial-gradient(circle 80px at var(--btn-x, 50%) var(--btn-y, 50%), rgba(255, 217, 61, 0.35), transparent 80%);
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
   z-index: -1;
-  border: 1px solid rgba(251, 191, 36, 0.5);
+  border: 1px solid rgba(255, 217, 61, 0.4);
 }
 
 .premium-btn-glow:hover::after {
   opacity: 1;
 }
+
 

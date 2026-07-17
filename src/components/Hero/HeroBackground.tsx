@@ -18,7 +18,7 @@ export const HeroBackground: React.FC<HeroBackgroundProps> = ({
   gridRef,
 }) => {
   return (
-    <div className="absolute inset-0 w-full h-full overflow-hidden bg-[#050505] z-0 select-none">
+    <div className="absolute inset-0 w-full h-full overflow-hidden bg-background z-0 select-none">
       {/* Layer 3: Grid */}
       <div ref={gridRef} className="absolute inset-0 w-full h-full z-10 transform-gpu">
         <AnimatedGrid />
