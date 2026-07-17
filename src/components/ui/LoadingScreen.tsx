@@ -8,6 +8,14 @@ export default function LoadingScreen() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    // Check if user has already visited and skipped the loader
+    const skipIntro = localStorage.getItem("skip-intro");
+    if (skipIntro === "true") {
+      setLoading(false);
+      setProgress(100);
+      return;
+    }
+
     // Increment progress bar/charging animation
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -19,8 +27,9 @@ export default function LoadingScreen() {
       });
     }, 18);
 
-    // Hide loader after 2.5s
+    // Hide loader after 2.5s and remember preference
     const timeout = setTimeout(() => {
+      localStorage.setItem("skip-intro", "true");
       setLoading(false);
     }, 2500);
 
@@ -29,6 +38,11 @@ export default function LoadingScreen() {
       clearTimeout(timeout);
     };
   }, []);
+
+  const handleSkip = () => {
+    localStorage.setItem("skip-intro", "true");
+    setLoading(false);
+  };
 
   return (
     <AnimatePresence>
@@ -135,7 +149,7 @@ export default function LoadingScreen() {
                 className="w-32 h-32 drop-shadow-[0_0_25px_rgba(255,217,61,0.2)]"
                 viewBox="0 0 100 100"
               >
-                {/* Red top shell (Premium Dark-tinted Red) */}
+                {/* Red top shell */}
                 <path d="M 50,10 A 40 40 0 0 1 90,50 L 78,50 A 28 28 0 0 0 50,22 Z" fill="#E53935" />
                 
                 {/* White bottom shell */}
@@ -167,7 +181,7 @@ export default function LoadingScreen() {
               </motion.svg>
             </motion.div>
 
-            {/* Exit Flash overlay (Pikachu tail flash at the end) */}
+            {/* Exit Flash overlay */}
             <motion.div
               initial={{ scale: 0, opacity: 0 }}
               animate={progress >= 90 ? { scale: [1, 2.5], opacity: [0, 0.9, 0] } : {}}
@@ -188,10 +202,10 @@ export default function LoadingScreen() {
             </motion.div>
           </div>
 
-          {/* Loading Subtitle */}
+          {/* Loading Subtitle & Brand Introduction */}
           <div className="mt-12 flex flex-col items-center gap-3">
             <div className="text-[10px] font-semibold tracking-[0.25em] text-[#FFD93D] font-mono uppercase">
-              Initializing Portfolio...
+              Initializing Experience...
             </div>
             
             {/* Percentage indicator */}
@@ -208,6 +222,26 @@ export default function LoadingScreen() {
                 transition={{ ease: "easeOut" }}
               />
             </div>
+
+            {/* Tasteful tribute intro message */}
+            <motion.div
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="text-center max-w-[280px] mt-4"
+            >
+              <p className="text-[10px] sm:text-[11px] font-mono text-white/50 leading-relaxed font-light">
+                Built with modern web technologies and inspired by the energy of Pikachu ⚡
+              </p>
+            </motion.div>
+
+            {/* Skip Option */}
+            <button
+              onClick={handleSkip}
+              className="mt-6 text-[9px] font-bold font-mono text-white/30 hover:text-white/60 uppercase tracking-widest transition-colors cursor-pointer border border-white/5 px-3 py-1 rounded-full bg-white/[0.01]"
+            >
+              Skip Intro
+            </button>
           </div>
         </motion.div>
       )}

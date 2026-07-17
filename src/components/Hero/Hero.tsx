@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef } from "react";
-import { HeroBackground } from "./HeroBackground";
 import { HeroContent } from "./HeroContent";
 import { ScrollIndicator } from "./ScrollIndicator";
 import { useHeroAnimations } from "./useHeroAnimations";
@@ -20,11 +19,6 @@ export default function Hero() {
   const socialsRef = useRef<HTMLDivElement>(null);
   const pikachuRef = useRef<HTMLDivElement>(null);
 
-  // Background layer refs for parallax scrolling
-  const particlesRef = useRef<HTMLDivElement>(null);
-  const blobsRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-
   // Mount the choreographed GSAP timelines and scroll pinning
   useHeroAnimations({
     containerRef,
@@ -34,9 +28,6 @@ export default function Hero() {
     descRef,
     ctasRef,
     socialsRef,
-    particlesRef,
-    blobsRef,
-    gridRef,
     pikachuRef,
   });
 
@@ -53,15 +44,8 @@ export default function Hero() {
     <section
       id="home"
       ref={containerRef}
-      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-background z-0"
+      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-transparent z-0"
     >
-      {/* Layered Background Parallax Elements */}
-      <HeroBackground
-        particlesRef={particlesRef}
-        blobsRef={blobsRef}
-        gridRef={gridRef}
-      />
-
       {/* Pikachu Running Mascot Background Layer (z-10, behind content but above background) */}
       <div 
         ref={pikachuRef} 

@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, MessageSquare, Send, CheckCircle2 } from "lucide-react";
+import { Mail, MessageSquare, Send, CheckCircle2, FileText } from "lucide-react";
 import { EASE_APPLE } from "@/lib/motion";
 
 interface ContactCard {
@@ -23,7 +23,7 @@ const CONTACT_CARDS: ContactCard[] = [
   },
   {
     title: "GitHub",
-    value: "@shivanitwr0803",
+    value: "@shivanitiwari0803",
     href: "https://github.com/shivanitiwari0803",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-[#4FC3F7]">
@@ -43,6 +43,23 @@ const CONTACT_CARDS: ContactCard[] = [
         <circle cx="4" cy="4" r="2" />
       </svg>
     ),
+  },
+  {
+    title: "X (Twitter)",
+    value: "@shivanitwr0803",
+    href: "https://x.com/shivanitwr0803",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white/90">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+      </svg>
+    ),
+  },
+  
+  {
+    title: "Resume",
+    value: "Shivani_Tiwari_Resume.pdf",
+    href: "/resume/Shivani_Tiwari_Software_Engineer_Resume.pdf",
+    icon: <FileText className="text-[#FFD93D]" size={20} />,
   },
 ];
 
@@ -105,7 +122,7 @@ export default function Contact() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start max-w-6xl mx-auto text-left">
         
-        {/* Left Side: Contact Info Info (col-span-5) */}
+        {/* Left Side: Contact Info (col-span-5) */}
         <div className="lg:col-span-5 flex flex-col gap-8">
           <div className="flex flex-col gap-4">
             <h3 className="text-xl font-display font-extrabold text-white flex items-center gap-2.5 uppercase">
@@ -117,31 +134,32 @@ export default function Contact() {
             </p>
           </div>
 
-          {/* Premium Cards Grid */}
-          <div className="grid grid-cols-1 gap-4">
+          {/* Premium Cards Grid - 2 Column Grid on Tablet/Desktop for 6 items balance */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {CONTACT_CARDS.map((card, idx) => (
               <motion.a
                 key={idx}
                 href={card.href}
-                target={card.isMail ? undefined : "_blank"}
-                rel={card.isMail ? undefined : "noopener noreferrer"}
+                download={card.title === "Resume" ? "Shivani_Tiwari_Resume.pdf" : undefined}
+                target={card.title === "Resume" ? undefined : (card.isMail ? undefined : "_blank")}
+                rel={card.title === "Resume" ? undefined : (card.isMail ? undefined : "noopener noreferrer")}
                 whileHover={{ y: -4, borderColor: "rgba(255, 217, 61, 0.3)" }}
                 whileTap={{ scale: 0.98 }}
-                className="p-5 rounded-2xl bg-[#171717]/85 relative overflow-hidden flex flex-col gap-2.5 group border border-white/5 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,217,61,0.06)] cursor-pointer"
+                className="p-4.5 rounded-2xl bg-[#171717]/85 relative overflow-hidden flex flex-col gap-2 group border border-white/5 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,217,61,0.06)] cursor-pointer"
               >
                 {/* Visual card glow inside */}
                 <div className="absolute top-0 right-0 w-24 h-24 bg-white/[0.01] rounded-full blur-[30px] pointer-events-none transition-all duration-500 group-hover:bg-white/[0.03]" />
 
-                <div className="flex items-center gap-4">
-                  <div className="p-2 bg-white/5 rounded-xl border border-white/5 group-hover:border-[#FFD93D]/20 group-hover:bg-[#FFD93D]/5 transition-colors duration-500">
+                <div className="flex items-center gap-3.5">
+                  <div className="p-2 bg-white/5 rounded-xl border border-white/5 group-hover:border-[#FFD93D]/20 group-hover:bg-[#FFD93D]/5 transition-colors duration-500 shrink-0">
                     {card.icon}
                   </div>
 
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-bold font-mono text-white/40 uppercase tracking-wide">
+                  <div className="flex flex-col overflow-hidden">
+                    <span className="text-[9px] font-bold font-mono text-white/40 uppercase tracking-wide">
                       {card.title}
                     </span>
-                    <span className="text-sm font-mono text-white group-hover:text-[#FFD93D] transition-colors duration-300 break-all">
+                    <span className="text-xs font-mono text-white group-hover:text-[#FFD93D] transition-colors duration-300 truncate">
                       {card.value}
                     </span>
                   </div>
@@ -169,14 +187,12 @@ export default function Contact() {
                   exit={{ opacity: 0 }}
                   className="absolute inset-0 bg-[#0A0A0A]/95 backdrop-blur-md flex flex-col items-center justify-center gap-5 z-40 p-6 text-center"
                 >
-                  {/* Lightning explosion / Pokeball closing */}
                   <motion.div
                     initial={{ scale: 0.5, rotate: -45, opacity: 0 }}
                     animate={{ scale: 1, rotate: 0, opacity: 1 }}
                     transition={{ type: "spring", stiffness: 200, damping: 15 }}
                     className="relative w-28 h-28 flex items-center justify-center"
                   >
-                    {/* Glowing sparks behind Pokéball */}
                     <div className="absolute inset-0 bg-[#FFD93D]/10 rounded-full animate-ping blur-md" />
                     
                     {/* Pokéball SVG locked shut */}
@@ -186,7 +202,7 @@ export default function Contact() {
                       <circle cx="50" cy="50" r="40" stroke="#171717" strokeWidth="5" fill="none" />
                       <line x1="10" y1="50" x2="90" y2="50" stroke="#171717" strokeWidth="6" />
                       <circle cx="50" cy="50" r="14" fill="#171717" />
-                      <circle cx="50" cy="50" r="7" fill="#A5FF6A" stroke="#FFFFFF" strokeWidth="1" /> {/* Green light = success */}
+                      <circle cx="50" cy="50" r="7" fill="#A5FF6A" stroke="#FFFFFF" strokeWidth="1" />
                     </svg>
                   </motion.div>
 

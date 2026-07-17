@@ -163,7 +163,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="relative z-10 py-28 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full select-none flex flex-col gap-14 overflow-hidden bg-background"
+      className="relative z-10 pt-28 pb-16 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full select-none flex flex-col gap-14 overflow-hidden bg-background"
     >
       {/* Section Header */}
       <div className="flex flex-col gap-2.5 text-left">
@@ -190,9 +190,6 @@ export default function About() {
           >
             {/* Ambient Radial Pikachu Yellow Glow */}
             <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-[#FFD93D]/5 blur-[80px] pointer-events-none transition-all duration-700 group-hover:bg-[#FFD93D]/10" />
-            
-            {/* Trainer Card Top Border Line */}
-            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#FFD93D] via-[#4FC3F7] to-[#FFD93D]" />
 
             {/* Trainer Card Header */}
             <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-5">
@@ -339,40 +336,60 @@ export default function About() {
         </motion.div>
       </div>
 
-      {/* Redesigned Premium Dashboard Statistics Widgets */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full border-t border-white/5 pt-12 z-10 text-left">
-        {[
-          { label: "Projects Completed", value: 12, suffix: "+", icon: <Code2 size={18} /> },
-          { label: "Technologies Used", value: 20, suffix: "+", icon: <Cpu size={18} /> },
-          { label: "Internship Experience", value: 1, suffix: "", icon: <Briefcase size={18} /> },
-          { label: "BCA CGPA Score", value: 9.32, suffix: "", icon: <GraduationCap size={18} />, isFloat: true },
-        ].map((stat, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.6, delay: idx * 0.08, ease: EASE_APPLE }}
-            whileHover={{ y: -6, borderColor: "rgba(255,217,61,0.3)" }}
-            className="relative p-5 rounded-2xl border border-white/5 bg-[#171717]/90 backdrop-blur-md transition-all duration-300 transform-gpu hover:shadow-[0_8px_24px_rgba(255,217,61,0.06)] flex flex-col justify-between h-36"
-          >
-            {/* Soft yellow radial background glow inside widget */}
-            <div className="absolute top-0 right-0 w-24 h-24 bg-[#FFD93D]/1 rounded-full blur-[25px] pointer-events-none" />
+      {/* Currently Building Active Developer Section */}
+      <div className="flex flex-col gap-6 w-full border-t border-white/5 pt-10 z-10 text-left">
+        <div className="flex flex-col gap-1">
+          <span className="text-[10px] font-bold font-mono text-[#FFD93D] uppercase tracking-widest">
+            Current Focus
+          </span>
+          <h3 className="text-xl font-display font-extrabold text-white uppercase tracking-tight">
+            Currently Building.
+          </h3>
+        </div>
 
-            <div className="flex items-center justify-between text-white/40">
-              <span className="text-[10px] font-bold tracking-widest uppercase font-mono text-white/40">{stat.label.split(" ")[0]}</span>
-              <span className="text-[#FFD93D]/80 bg-white/5 p-1.5 rounded-lg border border-white/5">{stat.icon}</span>
-            </div>
-
-            <div className="flex flex-col gap-0.5 mt-auto">
-              <h3 className="text-3xl sm:text-4xl font-display font-extrabold text-white tracking-tight leading-none">
-                <Counter value={stat.value} isFloat={stat.isFloat} />
-                <span className="text-[#FFD93D]">{stat.suffix}</span>
-              </h3>
-              <span className="text-[9px] font-bold font-mono text-white/30 uppercase tracking-wider mt-1">{stat.label}</span>
-            </div>
-          </motion.div>
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full">
+          {[
+            { 
+              title: "AI-Powered Apps", 
+              desc: "Integrating LLM pipelines, prompt benchmarks, and custom automated scoring engines.", 
+              icon: "🚀" 
+            },
+            { 
+              title: "Interactive Frontends", 
+              desc: "Crafting fluid Framer Motion states, three.js layers, and responsive visual simulators.", 
+              icon: "⚡" 
+            },
+            { 
+              title: "Full Stack Platforms", 
+              desc: "Architecting Next.js nodes, secure Supabase queries, and robust API routers.", 
+              icon: "🌐" 
+            },
+            { 
+              title: "AI Agents & Automation", 
+              desc: "Exploring autonomous agent loop workflows, function tools, and LLM orchestration.", 
+              icon: "🤖" 
+            },
+          ].map((item, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: idx * 0.08, ease: EASE_APPLE }}
+              whileHover={{ y: -4, borderColor: "rgba(255,217,61,0.25)" }}
+              className="relative p-5 rounded-2xl border border-white/5 bg-[#171717]/60 backdrop-blur-md transition-all duration-300 transform-gpu flex flex-col justify-between min-h-[140px]"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xl">{item.icon}</span>
+                <span className="text-[9px] font-bold font-mono text-white/30 uppercase tracking-widest">Active</span>
+              </div>
+              <div className="flex flex-col gap-1 mt-4">
+                <h4 className="text-sm font-bold text-white tracking-wide">{item.title}</h4>
+                <p className="text-xs text-[#9E9E9E] font-light leading-relaxed">{item.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

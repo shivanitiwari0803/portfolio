@@ -15,9 +15,6 @@ interface UseHeroAnimationsProps {
   descRef: React.RefObject<HTMLParagraphElement | null>;
   ctasRef: React.RefObject<HTMLDivElement | null>;
   socialsRef: React.RefObject<HTMLDivElement | null>;
-  particlesRef: React.RefObject<HTMLDivElement | null>;
-  blobsRef: React.RefObject<HTMLDivElement | null>;
-  gridRef: React.RefObject<HTMLDivElement | null>;
   pikachuRef: React.RefObject<HTMLDivElement | null>;
 }
 
@@ -29,9 +26,6 @@ export const useHeroAnimations = ({
   descRef,
   ctasRef,
   socialsRef,
-  particlesRef,
-  blobsRef,
-  gridRef,
   pikachuRef,
 }: UseHeroAnimationsProps) => {
   useEffect(() => {
@@ -56,7 +50,7 @@ export const useHeroAnimations = ({
       entranceTimeline
         // Fade in grid and blobs first
         .fromTo(
-          [gridRef.current, blobsRef.current],
+          [".global-grid", ".global-blobs"],
           { opacity: 0 },
           { opacity: 1, duration: 1.6, ease: "sine.inOut" }
         )
@@ -86,47 +80,6 @@ export const useHeroAnimations = ({
           "-=1.2"
         );
 
-
-      // 4. Parallax Background & Content Scrubbing
-      // Blobs parallax
-      gsap.to(blobsRef.current, {
-        yPercent: -28,
-        ease: "none",
-        scrollTrigger: {
-          trigger: container,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-          invalidateOnRefresh: true,
-        },
-      });
-
-      // Particle Canvas parallax
-      gsap.to(particlesRef.current, {
-        yPercent: -18,
-        ease: "none",
-        scrollTrigger: {
-          trigger: container,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-          invalidateOnRefresh: true,
-        },
-      });
-
-      // Grid parallax
-      gsap.to(gridRef.current, {
-        yPercent: -8,
-        ease: "none",
-        scrollTrigger: {
-          trigger: container,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-          invalidateOnRefresh: true,
-        },
-      });
-
       // Main Content parallax - moves up faster and fades out
       gsap.to(contentRef.current, {
         yPercent: -22,
@@ -153,9 +106,6 @@ export const useHeroAnimations = ({
     descRef,
     ctasRef,
     socialsRef,
-    particlesRef,
-    blobsRef,
-    gridRef,
     pikachuRef,
   ]);
 };

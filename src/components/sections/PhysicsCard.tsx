@@ -24,7 +24,7 @@ const brandColors: Record<string, string> = {
   threejs: "#FFFFFF",
   responsive: "#4FC3F7",
   supabase: "#3ECF8E",
-  openai: "#412991",
+  openai: "#10A37F",
   cohere: "#EEDFD2",
   mistral: "#FD5E09",
   prompting: "#FFD93D",
@@ -34,12 +34,14 @@ const brandColors: Record<string, string> = {
   postman: "#FF6C37",
   vscode: "#007ACC",
   vercel: "#FFFFFF",
-  render: "#4FC3F7",
+  render: "#46E3B7",
   python: "#3776AB",
   java: "#E76F51",
   "c-lang": "#A8B9CC",
+  html5: "#E34F26",
+  css3: "#1572B6",
   mongoose: "#880000",
-  jwt: "#D63AFF",
+  jwt: "#F43F5E",
   "rest-api": "#FF8C00",
   seo: "#A5FF6A",
   ssr: "#00E5FF",
@@ -77,6 +79,8 @@ const getProficiencyLabel = (id: string): string => {
     python: "Intermediate",
     java: "Intermediate",
     "c-lang": "Familiar",
+    html5: "Advanced",
+    css3: "Advanced",
     mongoose: "Intermediate",
     jwt: "Advanced",
     "rest-api": "Advanced",
@@ -89,7 +93,7 @@ const getProficiencyLabel = (id: string): string => {
   return map[id] || "Advanced";
 };
 
-// Retrieve official tech logos with their exact brand coloring
+// Retrieve official tech logos with their exact brand coloring or professional custom SVGs
 const getOfficialLogo = (id: string): React.ReactNode | null => {
   switch (id) {
     case "javascript":
@@ -97,56 +101,6 @@ const getOfficialLogo = (id: string): React.ReactNode | null => {
         <svg viewBox="0 0 24 24" className="w-full h-full">
           <path fill="#F7DF1E" d="M0 0h24v24H0z" />
           <path d="M22 18.27c-.16-.84-.73-1.5-1.89-1.93-1.16-.43-2.59-.7-3.83-1-.83-.18-1.65-.39-2.22-.64-.53-.24-.88-.58-.88-1.13 0-.66.54-1.08 1.35-1.08.79 0 1.3.32 1.57.84.16.29.21.57.22.99h2.72c-.05-1.53-.89-2.71-2.48-3.23-.75-.24-1.64-.36-2.53-.36-1.83 0-3.23.49-4.11 1.49-.71.82-1.04 1.84-1.04 3.12 0 1.95 1.14 2.95 3.14 3.42 1.3.3 2.8.59 3.98.88.82.21 1.41.47 1.7.74.34.3.5.73.5 1.28 0 .8-.66 1.39-1.79 1.39-1.08 0-1.82-.42-2.15-1.16-.17-.39-.2-.8-.22-1.4H6.7c.04 2.03.95 3.32 2.92 3.86 1.05.29 2.06.41 3.1.41 2.23 0 3.86-.57 4.79-1.64.82-.94 1.21-2.2 1.21-3.69z" />
-        </svg>
-      );
-    case "typescript":
-      return (
-        <svg viewBox="0 0 24 24" className="w-full h-full">
-          <path fill="#3178C6" d="M0 0h24v24H0z" />
-          <path fill="#FFF" d="M22 18.27c-.16-.84-.73-1.5-1.89-1.93-1.16-.43-2.59-.7-3.83-1-.83-.18-1.65-.39-2.22-.64-.53-.24-.88-.58-.88-1.13 0-.66.54-1.08 1.35-1.08.79 0 1.3.32 1.57.84.16.29.21.57.22.99h2.72c-.05-1.53-.89-2.71-2.48-3.23-.75-.24-1.64-.36-2.53-.36-1.83 0-3.23.49-4.11 1.49-.71.82-1.04 1.84-1.04 3.12 0 1.95 1.14 2.95 3.14 3.42 1.3.3 2.8.59 3.98.88.82.21 1.41.47 1.7.74.34.3.5.73.5 1.28 0 .8-.66 1.39-1.79 1.39-1.08 0-1.82-.42-2.15-1.16-.17-.39-.2-.8-.22-1.4H6.7c.04 2.03.95 3.32 2.92 3.86 1.05.29 2.06.41 3.1.41 2.23 0 3.86-.57 4.79-1.64.82-.94 1.21-2.2 1.21-3.69zM10.58 9.79H2.97v2.54h2.53v10.15h2.55v-10.15h2.53z" />
-        </svg>
-      );
-    case "react":
-      return (
-        <svg viewBox="-11.5 -10.23174 23 20.46348" className="w-full h-full">
-          <circle cx="0" cy="0" r="2.05" fill="#61DAFB" />
-          <g stroke="#61DAFB" strokeWidth="1" fill="none">
-            <ellipse rx="11" ry="4.2" />
-            <ellipse rx="11" ry="4.2" transform="rotate(60)" />
-            <ellipse rx="11" ry="4.2" transform="rotate(120)" />
-          </g>
-        </svg>
-      );
-    case "nextjs":
-      return (
-        <svg viewBox="0 0 180 180" className="w-full h-full" fill="none">
-          <circle cx="90" cy="90" r="90" fill="#000" />
-          <path d="M149.508 157.52L69.142 54H54v72h12.142V67.086l71.493 91.821a89.544 89.544 0 0011.873-1.387z" fill="url(#nextGrad)" />
-          <rect x="115" y="54" width="12" height="72" fill="url(#nextGrad2)" />
-          <defs>
-            <linearGradient id="nextGrad" x1="109" y1="116.5" x2="144.5" y2="160.5" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#FFF" />
-              <stop offset="1" stopColor="#FFF" stopOpacity="0" />
-            </linearGradient>
-            <linearGradient id="nextGrad2" x1="121" y1="54" x2="121" y2="126" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#FFF" />
-              <stop offset="1" stopColor="#FFF" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-        </svg>
-      );
-    case "nodejs":
-      return (
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="#339933">
-          <path d="M12 1.482L1.758 7.397v11.828L12 25.138l10.242-5.913V7.397L12 1.482zm8.814 16.574l-8.814 5.088-8.814-5.088V7.934l8.814-5.088 8.814 5.088v10.122zM12 4.417c-4.188 0-7.583 3.396-7.583 7.583s3.396 7.583 7.583 7.583 7.583-3.396 7.583-7.583c0-4.187-3.395-7.583-7.583-7.583zm0 12.639c-2.792 0-5.056-2.264-5.056-5.056S9.208 6.944 12 6.944s5.056 2.264 5.056 5.056-2.264 5.056-5.056 5.056z" />
-        </svg>
-      );
-    case "mongodb":
-      return (
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="none">
-          <path d="M12 .5C12 .5 7 5.5 7 12c0 4.5 2.5 8 5 11.5 2.5-3.5 5-7 5-11.5C17 5.5 12 .5 12 .5zm.5 18.5c-.3 0-.5-.2-.5-.5v-13c0-.3.2-.5.5-.5s.5.2.5.5v13c0 .3-.2.5-.5.5z" fill="#47A248" />
-          <path d="M12 23.5c-.3 0-.5-.2-.5-.5V1a.5.5 0 0 1 1 0v22c0 .3-.2.5-.5.5z" fill="#3F3F3F" />
-          <path d="M12 .5C12 .5 10 3 10 9c0 4 1 6.5 2 9.5-.5-.5-1-1.5-1.5-3.5C10 13 9 11 9 9c0-4.5 3-8.5 3-8.5z" fill="#589636" />
         </svg>
       );
     case "tailwindcss":
@@ -169,20 +123,14 @@ const getOfficialLogo = (id: string): React.ReactNode | null => {
       );
     case "postman":
       return (
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="#FF6C37">
-          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.176 11.516c.394-.367.632-.876.632-1.42 0-1.103-.895-1.996-1.996-1.996h-.667v3.416h2.031zm-6.241-3.416h2.03v3.416h-2.03v-3.416zm-3.666 4.797c.563-.443.903-1.077.903-1.782 0-1.26-.95-2.284-2.122-2.284H3.84v4.066h2.21v-4.066h.001c.563.443.903 1.077.903 1.782 0 1.26-.95 2.284-2.121 2.284h-1.03v2.21h3.13v-2.21z" />
+        <svg viewBox="0 0 24 24" className="w-full h-full" stroke="#FF6C37" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4.5 16.5L12 3l7.5 13.5h-15zM12 3v13.5M9 12h6" />
         </svg>
       );
     case "vscode":
       return (
         <svg viewBox="0 0 24 24" className="w-full h-full" fill="#007ACC">
           <path d="M23.985 6.804l-2.062-7.25-13.8 11.83-4.14-3.13-3.98 1.45V18.1l3.98 1.45 4.14-3.13 13.8 11.83 2.062-7.25-5.2-4.12 5.2-4.12zM15.42 12.01l-7.38 5.86V6.15l7.38 5.86z" />
-        </svg>
-      );
-    case "vercel":
-      return (
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="#FFF">
-          <path d="M24 22.525H0L12 1.475z" />
         </svg>
       );
     case "supabase":
@@ -193,46 +141,14 @@ const getOfficialLogo = (id: string): React.ReactNode | null => {
       );
     case "openai":
       return (
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="#412991">
+        <svg viewBox="0 0 24 24" className="w-full h-full" fill="#10A37F">
           <path d="M21.3 11.1c.2-.7.1-1.4-.3-2-.3-.5-.8-.8-1.3-.9.1-.4.1-.9 0-1.3-.2-.7-.7-1.2-1.3-1.5-.4-.2-.9-.2-1.3-.1 0-.5-.2-1-.6-1.4-.6-.6-1.5-.8-2.3-.5-.4.2-.7.4-.9.7-.4-.3-.9-.4-1.4-.4-.8 0-1.6.4-2 1.1-.3.4-.4.9-.4 1.4-.4-.1-.9-.1-1.3.1-.7.2-1.2.7-1.5 1.3-.2.4-.2.9-.1 1.3-.5 0-1 .2-1.4.6-.6.6-.8 1.5-.5 2.3.2.4.4.7.7.9-.3.4-.4.9-.4 1.4 0 .8.4 1.6 1.1 2 .4.3.9.4 1.4.4-.1.4-.1.9.1 1.3.2.7.7 1.2 1.3 1.5.4.2.9.2 1.3.1 0 .5.2 1 .6 1.4.6.6 1.5.8 2.3.5.4-.2.7-.4.9-.7.4.3.9.4 1.4.4.8 0 1.6-.4 2-1.1.3-.4.4-.9.4-1.4.4.1.9.1 1.3-.1.7-.2 1.2-.7 1.5-1.3.2-.4.2-.9.1-1.3.5 0 1-.2 1.4-.6.6-.6.8-1.5.5-2.3-.2-.3-.4-.6-.7-.9zm-13.8 2.8l-1.9-1.1 1.1-1.9 1.9 1.1-1.1 1.9zm1-5.1L7.4 7.4 9.3 6.3l1.1 1.9-1.9 1.1zm5.1-1l-1.1-1.9 1.9-1.1 1.1 1.9-1.9 1.1zm4.1 3.2l-1.9-1.1 1.1-1.9 1.9 1.1-1.1 1.9zm-1 5.1l1.1 1.9-1.9 1.1-1.1-1.9 1.9-1.1zm-5.1 1l1.1 1.9-1.9 1.1-1.1-1.9 1.9-1.1z" />
-        </svg>
-      );
-    case "python":
-      return (
-        <svg viewBox="0 0 24 24" className="w-full h-full">
-          <path fill="#3776AB" d="M14.25.189h-4.5c-1.75 0-3.15 1.4-3.15 3.15v2.25h9v-2.25a3.15 3.15 0 00-3.15-3.15zM6.6 6.489h2.25v2.25H6.6v-2.25zm5.4 0h2.25v2.25H12v-2.25z" />
-          <path fill="#FFE873" d="M9.75 23.811h4.5c1.75 0 3.15-1.4 3.15-3.15v-2.25h-9v2.25a3.15 3.15 0 003.15 3.15zm7.65-6.3h-2.25v-2.25h2.25v2.25zm-5.4 0h-2.25v-2.25h2.25v2.25zm-5.4-4.5v-2.25c0-1.75 1.4-3.15 3.15-3.15h1.35v1.8h-1.35c-.75 0-1.35.6-1.35 1.35v2.25H6.6zm10.8 0v2.25c0 1.75-1.4 3.15-3.15 3.15h-1.35v-1.8h1.35c.75 0 1.35-.6 1.35-1.35v-2.25h1.8z" />
-        </svg>
-      );
-    case "java":
-      return (
-        <svg viewBox="0 0 24 24" className="w-full h-full">
-          <path fill="#5382A1" d="M19.14 18.06c.07-.15.11-.31.11-.47 0-.3-.15-.59-.44-.88l-1.07-.63s1.28-.43 1.92-.85c1.17-.75 1.71-1.71 1.71-2.77 0-2.35-2.67-3.41-2.67-3.41s2.24-.75 2.24-2.24c0-1.71-1.92-2.56-1.92-2.56s1.28-.75 1.28-1.71c0-1.5-1.5-2.24-1.5-2.24S15.29 1.49 14.54.74c-1.2-.86-3.2-.75-3.2-.75s1.2 1.2.75 1.92c-.32.48-1.17.75-1.71 1.17-.96.75-1.39 1.71-1.39 2.67 0 1.92 1.71 2.77 1.71 2.77s-1.92.53-2.35 1.71c-.32.85-.21 1.71.21 2.35.53.75 1.6 1.28 1.6 1.28s-1.92.64-2.35 1.6c-.32.75-.32 1.6.21 2.35.64.85 2.03 1.39 2.03 1.39z" />
-          <path fill="#E76F51" d="M11.34 22.06c2.4 0 4.34-.86 4.34-1.86s-1.94-1.86-4.34-1.86-4.34.86-4.34 1.86 1.94 1.86 4.34 1.86zM11.34 23.94c3.4 0 6.14-.96 6.14-2.14s-2.74-2.14-6.14-2.14-6.14.96-6.14 2.14 2.74 2.14 6.14 2.14z" />
-        </svg>
-      );
-    case "html5":
-      return (
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="#E34F26">
-          <path d="M1.5 0h21l-1.9 21.2L12 24l-8.6-2.8L1.5 0zm15.6 6h-7.6l.2 2.3h7.2l-.5 5.5-4.3 1.4-4.3-1.4-.3-3.2H4.8l.5 6.2 6.7 2.2 6.7-2.2 1-11.3z" />
-        </svg>
-      );
-    case "css3":
-      return (
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="#1572B6">
-          <path d="M1.5 0h21l-1.9 21.2L12 24l-8.6-2.8L1.5 0zm15.6 6h-7.6l.2 2.3h7.2l-.5 5.5-4.3 1.4-4.3-1.4-.3-3.2H4.8l.5 6.2 6.7 2.2 6.7-2.2 1-11.3z" />
         </svg>
       );
     case "scss":
       return (
         <svg viewBox="0 0 24 24" className="w-full h-full" fill="#CF649A">
           <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.637 14.18c-.464.708-1.282 1.092-2.124 1.092-.843 0-1.62-.384-2.125-1.092L12 11.23l-1.388 2.95c-.504.708-1.282 1.092-2.124 1.092-.843 0-1.621-.384-2.125-1.092C5.9 13.472 5.54 12.565 5.54 11.53c0-1.036.36-1.943.823-2.651.504-.708 1.282-1.092 2.125-1.092.842 0 1.62.384 2.124 1.092L12 11.83l1.388-2.95c.505-.708 1.282-1.092 2.125-1.092.842 0 1.62.384 2.124 1.092.464.708.824 1.615.824 2.65c0 1.036-.36 1.943-.824 2.651z" />
-        </svg>
-      );
-    case "tailwindcss":
-      return (
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="#06B6D4">
-          <path d="M12 6.094c-2.932 0-4.887 1.466-5.864 4.398 1.466-1.955 3.176-2.688 5.13-2.199 1.116.28 1.913 1.09 2.796 1.988 1.44 1.467 3.109 3.167 6.634 3.167 2.933 0 4.888-1.467 5.865-4.399-1.467 1.955-3.177 2.688-5.131 2.199-1.116-.28-1.913-1.09-2.796-1.988-1.44-1.467-3.109-3.167-6.634-3.167zm-12 5.864c-2.933 0-4.888 1.467-5.865 4.399 1.467-1.955 3.177-2.688 5.13-2.199 1.117.28 1.914 1.09 2.797 1.988 1.44 1.467 3.11 3.167 6.634 3.167 2.933 0 4.888-1.467 5.865-4.399-1.467 1.955-3.177 2.688-5.131 2.199-1.116-.28-1.913-1.09-2.796-1.988-1.44-1.467-3.11-3.167-6.634-3.167z" />
         </svg>
       );
     case "threejs":
@@ -243,46 +159,110 @@ const getOfficialLogo = (id: string): React.ReactNode | null => {
       );
     case "render":
       return (
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="#4FC3F7">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14.5h-2v-2h2v2zm0-4h-2V7h2v5z" />
+        <svg viewBox="0 0 24 24" className="w-full h-full" stroke="#46E3B7" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+          <line x1="12" y1="22.08" x2="12" y2="12" />
         </svg>
       );
     case "jwt":
       return (
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="#D63AFF">
-          <rect x="3" y="10" width="18" height="12" rx="3" />
-          <path d="M7 10V7a5 5 0 0 1 10 0v3" fill="none" stroke="#D63AFF" strokeWidth="2.5" />
+        <svg viewBox="0 0 24 24" className="w-full h-full" stroke="#F43F5E" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          <circle cx="12" cy="16" r="1" />
         </svg>
       );
     case "mongoose":
       return (
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="#880000">
-          <path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2zm1 14.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm-.5-4.5c-.3 0-.5-.2-.5-.5V7a.5.5 0 0 1 1 0v4.5c0 .3-.2.5-.5.5z" />
+        <svg viewBox="0 0 24 24" className="w-full h-full" stroke="#880000" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
         </svg>
       );
     case "cohere":
       return (
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="#EEDFD2">
-          <circle cx="12" cy="12" r="10" stroke="#EEDFD2" strokeWidth="2" fill="none" />
-          <circle cx="12" cy="12" r="5" fill="#EEDFD2" />
+        <svg viewBox="0 0 24 24" className="w-full h-full" stroke="#EEDFD2" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8" />
         </svg>
       );
     case "mistral":
       return (
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="#FD5E09">
-          <path d="M4 4h4l4 8 4-8h4v16h-4V9.5l-4 7.5-4-7.5V20H4V4z" />
+        <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="#FD5E09" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 19V5l9 7 9-7v14" />
         </svg>
       );
     case "rest-api":
       return (
-        <svg viewBox="0 0 24 24" className="w-full h-full" fill="#FF8C00">
-          <path d="M6 3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zm0 2a1 1 0 0 0-1 1v1.5h14V6a1 1 0 0 0-1-1H6zm13 4.5H5V18a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5zM12 11a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z" />
+        <svg viewBox="0 0 24 24" className="w-full h-full" stroke="#FF8C00" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="16" y="16" width="6" height="6" rx="1" />
+          <rect x="2" y="16" width="6" height="6" rx="1" />
+          <rect x="9" y="2" width="6" height="6" rx="1" />
+          <path d="M12 8v8M5 16v-4h14v4" />
         </svg>
       );
     case "c-lang":
       return (
         <svg viewBox="0 0 24 24" className="w-full h-full" fill="#A8B9CC">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.29 14.29c-.39.39-.9.59-1.54.59-.62 0-1.12-.2-1.52-.61-.39-.4-.59-.96-.59-1.66v-4.57c0-.72.2-1.28.59-1.68.39-.4.9-.6 1.54-.6.64 0 1.15.2 1.53.6.39.4.58.96.58 1.69h-2.1v4.54h2.1v1.7z" />
+        </svg>
+      );
+    case "responsive":
+      return (
+        <svg viewBox="0 0 24 24" className="w-full h-full" stroke="#4FC3F7" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+          <line x1="8" y1="21" x2="16" y2="21" />
+          <line x1="12" y1="17" x2="12" y2="21" />
+        </svg>
+      );
+    case "prompting":
+      return (
+        <svg viewBox="0 0 24 24" className="w-full h-full" stroke="#FFD93D" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          <path d="M8 10h.01M12 10h.01M16 10h.01" />
+        </svg>
+      );
+    case "llm-integration":
+      return (
+        <svg viewBox="0 0 24 24" className="w-full h-full" stroke="#4FC3F7" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+          <path d="M12 6v12M6 12h12" />
+        </svg>
+      );
+    case "seo":
+      return (
+        <svg viewBox="0 0 24 24" className="w-full h-full" stroke="#A5FF6A" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          <path d="M11 7v8M8 11h6" />
+        </svg>
+      );
+    case "ssr":
+      return (
+        <svg viewBox="0 0 24 24" className="w-full h-full" stroke="#00E5FF" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
+          <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
+          <line x1="6" y1="6" x2="6.01" y2="6" />
+          <line x1="6" y1="18" x2="6.01" y2="18" />
+        </svg>
+      );
+    case "performance":
+      return (
+        <svg viewBox="0 0 24 24" className="w-full h-full" stroke="#A5FF6A" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+          <polyline points="12 12 16 8" />
+        </svg>
+      );
+    case "vitals":
+      return (
+        <svg viewBox="0 0 24 24" className="w-full h-full" stroke="#E040FB" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+        </svg>
+      );
+    case "api-opt":
+      return (
+        <svg viewBox="0 0 24 24" className="w-full h-full" stroke="#FFD93D" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
         </svg>
       );
     default:
@@ -395,8 +375,8 @@ export const PhysicsCard: React.FC<PhysicsCardProps> = React.memo(({
         onMouseLeave={handleMouseLeave}
         className={`inner-card relative rounded-2xl border border-white/5 transition-all duration-300 transform-gpu ${
           isMobile 
-            ? "w-[90px] h-[130px] p-2" 
-            : "w-[125px] h-[175px] p-3"
+            ? "w-[100px] h-[145px] p-2.5" 
+            : "w-[140px] h-[195px] p-3.5"
         } ${isFlipped ? "is-flipped" : ""}`}
       >
         {/* Holographic reflection sheet */}
@@ -406,7 +386,7 @@ export const PhysicsCard: React.FC<PhysicsCardProps> = React.memo(({
         <div className="card-front absolute inset-0 flex flex-col justify-between p-2.5 bg-[#171717] border-2 border-white/10 rounded-2xl overflow-hidden">
           {/* Top Info: Name + ⚡ */}
           <div className="flex items-center justify-between border-b border-[#FFD93D]/30 pb-1">
-            <span className="font-display font-extrabold text-[9px] sm:text-[11px] text-white tracking-tight uppercase truncate max-w-[70px]">
+            <span className="font-display font-extrabold text-[10px] sm:text-[12px] text-white tracking-tight uppercase truncate max-w-[85px]">
               {skill.name.split(" ")[0]}
             </span>
             <span className="text-[10px] text-[#FFD93D] font-bold">⚡</span>
@@ -414,7 +394,7 @@ export const PhysicsCard: React.FC<PhysicsCardProps> = React.memo(({
 
           {/* Centered Image/Icon Frame - Glows in Brand Color on Hover */}
           <div className="flex-1 my-1.5 rounded-lg bg-black/40 border border-white/5 flex items-center justify-center relative overflow-hidden group-hover:border-[#FFD93D]/30">
-            <span className="icon-wrapper w-10 h-10 flex items-center justify-center text-white/80 transition-transform duration-300">
+            <span className="icon-wrapper w-12 h-12 flex items-center justify-center text-white/80 transition-transform duration-300">
               {officialLogo}
             </span>
           </div>
@@ -519,8 +499,8 @@ export const PhysicsCard: React.FC<PhysicsCardProps> = React.memo(({
         }
 
         .inner-card svg {
-          width: ${isMobile ? "1.5rem" : "2.0rem"};
-          height: ${isMobile ? "1.5rem" : "2.0rem"};
+          width: ${isMobile ? "1.65rem" : "2.25rem"};
+          height: ${isMobile ? "1.65rem" : "2.25rem"};
         }
 
         /* Hover brand icon scale + glow drop shadow */

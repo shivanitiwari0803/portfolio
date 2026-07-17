@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ArrowRight, Download } from "lucide-react";
+import { FileText, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 import PikachuSilhouette from "./PikachuSilhouette";
 
@@ -21,16 +21,7 @@ export const HeroContent: React.FC<HeroContentProps> = ({
   headlineRef,
   descRef,
   ctasRef,
-  onScrollToProjects,
 }) => {
-  const handleScrollTo = (e: React.MouseEvent, targetId: string) => {
-    e.preventDefault();
-    const target = document.querySelector(targetId);
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   return (
     <div 
       ref={contentRef}
@@ -75,40 +66,128 @@ export const HeroContent: React.FC<HeroContentProps> = ({
           </p>
         </div>
 
-        {/* Call to Actions (Slide & Scale) */}
+        {/* Call to Actions Action Panel (Slide & Scale) */}
         <div 
           ref={ctasRef}
-          className="opacity-0 flex flex-wrap gap-4 mt-2"
+          className="opacity-0 flex flex-col gap-5 mt-2 w-full"
         >
-          {/* Start Journey CTA */}
-          <motion.button
-            onClick={(e) => handleScrollTo(e, "#about")}
-            whileHover={{ scale: 1.04, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            className="cta-button-primary group relative overflow-hidden flex items-center gap-2.5 px-8 py-4 bg-[#FFD93D] text-black font-semibold text-sm rounded-full transition-all duration-300 transform-gpu cursor-pointer shadow-[0_4px_20px_rgba(255,217,61,0.15)] hover:shadow-[0_0_24px_rgba(255,217,61,0.45)]"
-          >
-            {/* Ripple ring effect */}
-            <span className="absolute inset-0 w-full h-full rounded-full border-2 border-[#FFD93D] opacity-0 group-hover:animate-[ping_1.5s_infinite] pointer-events-none" />
-            
-            Start Journey
-            <ArrowRight
-              size={16}
-              className="group-hover:translate-x-1 transition-transform duration-300"
-            />
-          </motion.button>
+          {/* Primary CTA Buttons Row */}
+          <div className="flex flex-wrap gap-3">
+            {/* GitHub */}
+            <motion.a
+              href="https://github.com/shivanitiwari0803"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub Profile"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="btn-link btn-github group flex items-center gap-2 px-4.5 py-2.5 rounded-full bg-white/[0.03] text-white font-semibold text-xs sm:text-sm border border-white/10"
+            >
+              <svg 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2.2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className="w-[15px] h-[15px] group-hover:text-white transition-colors"
+              >
+                <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+                <path d="M9 18c-4.51 2-5-2-7-2" />
+              </svg>
+              <span>GitHub</span>
+            </motion.a>
 
-          {/* View Projects CTA */}
-          <motion.button
-            onClick={onScrollToProjects}
-            whileHover={{ scale: 1.04, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            className="cta-button-secondary group relative overflow-hidden flex items-center gap-2.5 px-8 py-4 bg-white/[0.03] text-white font-semibold text-sm rounded-full border border-white/10 transition-all duration-300 transform-gpu cursor-pointer hover:border-[#FFD93D]/30 hover:bg-white/[0.05] hover:shadow-[0_0_20px_rgba(255,217,61,0.15)]"
-          >
-            {/* Ripple ring effect */}
-            <span className="absolute inset-0 w-full h-full rounded-full border-2 border-white/20 opacity-0 group-hover:animate-[ping_1.5s_infinite] pointer-events-none" />
+            {/* LinkedIn */}
+            <motion.a
+              href="https://www.linkedin.com/in/shivani-tiwari-8571a729a/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn Profile"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="btn-link btn-linkedin group flex items-center gap-2 px-4.5 py-2.5 rounded-full bg-white/[0.03] text-white font-semibold text-xs sm:text-sm border border-white/10"
+            >
+              <svg 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2.2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className="w-[15px] h-[15px] group-hover:text-[#4FC3F7] transition-colors"
+              >
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                <rect width="4" height="12" x="2" y="9" />
+                <circle cx="4" cy="4" r="2" />
+              </svg>
+              <span>LinkedIn</span>
+            </motion.a>
+
+            {/* X (formerly Twitter) */}
+            <motion.a
+              href="https://x.com/ishivanitwr"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="X (formerly Twitter) Profile"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="btn-link btn-x group flex items-center gap-2 px-4.5 py-2.5 rounded-full bg-white/[0.03] text-white font-semibold text-xs sm:text-sm border border-white/10"
+            >
+              <svg 
+                viewBox="0 0 24 24" 
+                fill="currentColor" 
+                className="w-[15px] h-[15px] group-hover:text-white transition-colors"
+              >
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+              <span>X.com</span>
+            </motion.a>
+
             
-            View Projects
-          </motion.button>
+          
+            {/* Resume */}
+            <motion.a
+              href="/Shivani_Tiwari_Resume.pdf"
+              download="/resume/Shivani_Tiwari_Software_Engineer_Resume.pdf"
+              aria-label="Download Resume"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="btn-link btn-resume group flex items-center gap-2 px-4.5 py-2.5 rounded-full bg-white/[0.03] text-white font-semibold text-xs sm:text-sm border border-white/10"
+            >
+              <FileText size={15} className="group-hover:text-[#FFD93D] transition-colors" />
+              <span>Resume</span>
+            </motion.a>
+
+            {/* Email */}
+            <motion.a
+              href="mailto:shivanitwr0803@gmail.com"
+              aria-label="Send Email"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="btn-link btn-email group flex items-center gap-2 px-4.5 py-2.5 rounded-full bg-white/[0.03] text-white font-semibold text-xs sm:text-sm border border-white/10"
+            >
+              <Mail size={15} className="group-hover:text-[#FFD93D] transition-colors" />
+              <span>Email</span>
+            </motion.a>
+          </div>
+
+          {/* Secondary CTA: Modern Status Badge Panel */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-5 py-3.5 rounded-2xl border border-white/5 bg-white/[0.01] backdrop-blur-md max-w-xl text-left select-none">
+            <div className="flex items-center gap-2.5 shrink-0">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#A5FF6A] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#A5FF6A]"></span>
+              </span>
+              <span className="text-[10px] font-bold font-mono text-[#A5FF6A] uppercase tracking-wider">
+                Open to Work
+              </span>
+            </div>
+            <div className="hidden sm:block w-[1px] h-4.5 bg-white/10" />
+            <p className="text-xs text-[#9E9E9E] leading-relaxed font-light font-mono">
+              Available for Full-Time Software Engineer &amp; Full Stack Developer opportunities.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -121,6 +200,55 @@ export const HeroContent: React.FC<HeroContentProps> = ({
       >
         <PikachuSilhouette />
       </motion.div>
+
+      {/* Global CSS Injectors for Buttons and Glow Animations */}
+      <style jsx global>{`
+        .btn-link {
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-link:hover {
+          border-color: #FFD93D !important;
+        }
+
+        .btn-github:hover {
+          box-shadow: 0 0 16px rgba(255, 255, 255, 0.22);
+        }
+
+        .btn-linkedin:hover {
+          box-shadow: 0 0 16px rgba(79, 195, 247, 0.32);
+        }
+
+        .btn-x:hover {
+          box-shadow: 0 0 16px rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-leetcode:hover {
+          box-shadow: 0 0 16px rgba(255, 161, 22, 0.35);
+          border-color: #FFA116 !important;
+        }
+
+        .btn-resume:hover {
+          box-shadow: 0 0 16px rgba(255, 217, 61, 0.32);
+        }
+
+        @keyframes email-pulse {
+          0% {
+            box-shadow: 0 0 4px rgba(255, 217, 61, 0.15);
+            border-color: rgba(255, 217, 61, 0.3);
+          }
+          100% {
+            box-shadow: 0 0 18px rgba(255, 217, 61, 0.45);
+            border-color: #FFD93D;
+          }
+        }
+
+        .btn-email:hover {
+          animation: email-pulse 1.2s infinite alternate ease-in-out;
+        }
+      `}</style>
     </div>
   );
 };
