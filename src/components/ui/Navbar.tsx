@@ -90,7 +90,12 @@ export default function Navbar() {
             onClick={(e) => handleScrollTo(e, "#home")}
             className="text-lg font-display font-extrabold tracking-tight text-white hover:text-accent transition-colors duration-300 flex items-center gap-1.5"
           >
-            SHIVANI<span className="text-accent">⚡</span>
+            SHIVANI
+            <span className="text-accent inline-block ml-0.5">
+              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current">
+                <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" />
+              </svg>
+            </span>
           </a>
 
           {/* Desktop Nav Items */}

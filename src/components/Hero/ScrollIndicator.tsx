@@ -23,7 +23,7 @@ export const ScrollIndicator: React.FC<ScrollIndicatorProps> = ({ onClick }) => 
   return (
     <div
       onClick={onClick}
-      className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2.5 cursor-pointer z-30 select-none group"
+      className="scroll-indicator absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2.5 cursor-pointer z-30 select-none group"
     >
       {/* Rotating Pokéball */}
       <div 

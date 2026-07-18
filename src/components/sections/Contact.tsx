@@ -1,9 +1,18 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, MessageSquare, Send, CheckCircle2, FileText } from "lucide-react";
-import { EASE_APPLE } from "@/lib/motion";
+import { Mail, MessageSquare, FileText } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Import custom split components & services
+import { FormState, validateForm, ValidationErrors } from "./contact/FormValidation";
+import { sendContactEmail } from "./contact/EmailService";
+import { Toast, ToastContainer } from "./contact/ToastNotification";
+import { LoadingButton } from "./contact/LoadingButton";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface ContactCard {
   title: string;
@@ -47,71 +56,185 @@ const CONTACT_CARDS: ContactCard[] = [
   {
     title: "X (Twitter)",
     value: "@shivanitwr0803",
-    href: "https://x.com/shivanitwr0803",
+    href: "https://x.com/ishivanitwr",
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white/90">
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
       </svg>
     ),
   },
-  
+  {
+    title: "LeetCode",
+    value: "shivanitwr0803",
+    href: "https://leetcode.com/u/shivanitwr0803/",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#FFA116]">
+        <path d="M13.483 0a1.374 1.374 0 00-.961.414L7.116 5.79a1.37 1.37 0 00-.415.953v1.402L1.267 13.56a3.834 3.834 0 000 5.437l1.737 1.737a3.834 3.834 0 005.437 0l5.416-5.416h1.402c.36 0 .707-.144.953-.415l5.376-5.376A1.377 1.377 0 0021.2 7.7a1.362 1.362 0 00-.961-.414h-2.671V4.615H13.48zM14.88 4.615h2.67v2.671H14.88zm-2.67 2.671h2.671v2.67H12.21zm-2.671 2.67h2.67v2.672h-2.67zm-2.67 2.672h2.67v2.67h-2.67zM14.07 14.88l-5.416 5.416a2.463 2.463 0 01-3.48 0l-1.738-1.738a2.463 2.463 0 010-3.48l5.417-5.417h1.4a1.377 1.377 0 00.962-.414l2.67-2.67v1.4c0 .36.145.707.414.953l2.672 2.671z" />
+      </svg>
+    ),
+  },
   {
     title: "Resume",
     value: "Shivani_Tiwari_Resume.pdf",
-    href: "/resume/Shivani_Tiwari_Software_Engineer_Resume.pdf",
+    href: "/Shivani_Tiwari_Resume.pdf",
     icon: <FileText className="text-[#FFD93D]" size={20} />,
   },
 ];
 
 export default function Contact() {
-  const [formState, setFormState] = useState({ name: "", email: "", message: "" });
+  const [formState, setFormState] = useState<FormState>({
+    name: "",
+    email: "",
+    subject: "",
+    company: "",
+    message: "",
+    honeypot: "",
+  });
+
+  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [chargeProgress, setChargeProgress] = useState(0);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const toastIdCounter = useRef(0);
+
+  // Animate Contact Section entrance on Scroll with GSAP
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const ctx = gsap.context(() => {
+      // Set initial transparent/offset states
+      gsap.set(".contact-heading", { opacity: 0, y: 30 });
+      gsap.set(".connection-card", { opacity: 0, y: 15 });
+      gsap.set(".form-container", { opacity: 0, y: 35 });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      tl.to(".contact-heading", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" })
+        .to(".connection-card", { opacity: 1, y: 0, duration: 0.6, stagger: 0.05, ease: "power2.out" }, "-=0.5")
+        .to(".form-container", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.4");
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
+
+  const removeToast = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }, []);
+
+  const addToast = useCallback((message: string, type: "success" | "error" | "info" = "info") => {
+    toastIdCounter.current += 1;
+    const id = toastIdCounter.current.toString();
+    setToasts((prev) => [...prev, { id, message, type }]);
+
+    // Auto-remove toast after 4.5 seconds
+    setTimeout(() => {
+      removeToast(id);
+    }, 4500);
+  }, [removeToast]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormState((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setFormState((prev) => {
+      const next = { ...prev, [name]: value };
+      
+      // Real-time error validation
+      if (touched[name]) {
+        const validation = validateForm(next);
+        setErrors((prevErr) => ({
+          ...prevErr,
+          [name]: (validation as Record<string, string | undefined>)[name],
+        }));
+      }
+      return next;
+    });
+  };
+
+  const handleBlur = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    const validation = validateForm(formState);
+    setErrors((prevErr) => ({
+      ...prevErr,
+      [field]: (validation as Record<string, string | undefined>)[field],
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formState.name || !formState.email || !formState.message) return;
+
+    // Mark all fields touched
+    const touchedFields: Record<string, boolean> = {};
+    Object.keys(formState).forEach((key) => {
+      touchedFields[key] = true;
+    });
+    setTouched(touchedFields);
+
+    // Validate
+    const validationErrors = validateForm(formState);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      addToast("Please correct the errors in the form before sending.", "error");
+      return;
+    }
 
     setIsSubmitting(true);
-    setChargeProgress(0);
 
-    // Charge button progress simulation (loading jingle effect)
-    const interval = setInterval(() => {
-      setChargeProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        return prev + 5;
+    try {
+      const result = await sendContactEmail(formState);
+      
+      if (!result.success) {
+        setIsSubmitting(false);
+        addToast(result.error || "Unable to send your message right now.", "error");
+        return;
+      }
+
+      // Trigger Success UI state
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+      addToast("Message sent successfully.", "success");
+
+      // Reset form variables
+      setFormState({
+        name: "",
+        email: "",
+        subject: "",
+        company: "",
+        message: "",
+        honeypot: "",
       });
-    }, 80);
+      setTouched({});
+      setErrors({});
 
-    await new Promise((resolve) => setTimeout(resolve, 1800));
-    clearInterval(interval);
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setFormState({ name: "", email: "", message: "" });
-
-    // Hide success banner after 4.5 seconds
-    setTimeout(() => setIsSubmitted(false), 4500);
+      // Reset submission banner after 5.5s
+      setTimeout(() => setIsSubmitted(false), 5500);
+    } catch (err: unknown) {
+      setIsSubmitting(false);
+      const errMsg = err instanceof Error ? err.message : String(err);
+      addToast(errMsg || "Unable to send your message right now.", "error");
+    }
   };
 
   return (
     <section 
       id="contact" 
+      ref={sectionRef}
       className="py-28 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full select-none relative overflow-hidden"
     >
       {/* Background glow resembling healing lights */}
       <div className="absolute bottom-0 right-0 w-[450px] h-[450px] bg-[#FFD93D]/3 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Section Header */}
-      <div className="flex flex-col gap-2.5 mb-16 text-left">
+      <div className="contact-heading flex flex-col gap-2.5 mb-16 text-left">
         <span className="text-xs font-semibold tracking-widest text-[#FFD93D] uppercase font-mono">
           06 / Connect
         </span>
@@ -122,7 +245,7 @@ export default function Contact() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start max-w-6xl mx-auto text-left">
         
-        {/* Left Side: Contact Info (col-span-5) */}
+        {/* Left Side: Connection Info (col-span-5) */}
         <div className="lg:col-span-5 flex flex-col gap-8">
           <div className="flex flex-col gap-4">
             <h3 className="text-xl font-display font-extrabold text-white flex items-center gap-2.5 uppercase">
@@ -134,18 +257,16 @@ export default function Contact() {
             </p>
           </div>
 
-          {/* Premium Cards Grid - 2 Column Grid on Tablet/Desktop for 6 items balance */}
+          {/* Premium Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {CONTACT_CARDS.map((card, idx) => (
-              <motion.a
+              <a
                 key={idx}
                 href={card.href}
                 download={card.title === "Resume" ? "Shivani_Tiwari_Resume.pdf" : undefined}
                 target={card.title === "Resume" ? undefined : (card.isMail ? undefined : "_blank")}
                 rel={card.title === "Resume" ? undefined : (card.isMail ? undefined : "noopener noreferrer")}
-                whileHover={{ y: -4, borderColor: "rgba(255, 217, 61, 0.3)" }}
-                whileTap={{ scale: 0.98 }}
-                className="p-4.5 rounded-2xl bg-[#171717]/85 relative overflow-hidden flex flex-col gap-2 group border border-white/5 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,217,61,0.06)] cursor-pointer"
+                className="connection-card p-4.5 rounded-2xl bg-[#171717]/85 relative overflow-hidden flex flex-col gap-2 group border border-white/5 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,217,61,0.06)] cursor-pointer hover:border-[#FFD93D]/30"
               >
                 {/* Visual card glow inside */}
                 <div className="absolute top-0 right-0 w-24 h-24 bg-white/[0.01] rounded-full blur-[30px] pointer-events-none transition-all duration-500 group-hover:bg-white/[0.03]" />
@@ -164,18 +285,19 @@ export default function Contact() {
                     </span>
                   </div>
                 </div>
-              </motion.a>
+              </a>
             ))}
           </div>
         </div>
 
-        {/* Right Side: Contact Form styled as Pokémon Center (col-span-7) */}
-        <div className="lg:col-span-7">
+        {/* Right Side: Contact Form (col-span-7) */}
+        <div className="lg:col-span-7 form-container w-full">
           <form 
             onSubmit={handleSubmit} 
+            noValidate
             className="flex flex-col gap-6 p-8 rounded-3xl bg-[#171717] border border-white/5 relative overflow-hidden"
           >
-            {/* Healing machine scanner light overlay */}
+            {/* Charging machine scanner light bar overlay */}
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFD93D]/30 to-transparent animate-[pulse_3s_infinite]" />
 
             {/* Success message overlay */}
@@ -210,16 +332,28 @@ export default function Contact() {
                     Transmission Secured!
                   </h3>
                   <p className="text-xs sm:text-sm text-[#9E9E9E] max-w-sm leading-relaxed font-light">
-                    Your message has been processed successfully. Nurse Joy has queued it for Shivani&apos;s review. Expect a response soon!
+                    Thank you! Your message has been sent successfully. I&apos;ll get back to you as soon as possible.
                   </p>
                 </motion.div>
               )}
             </AnimatePresence>
 
+            {/* Spam Honeypot Field (hidden from screen readers & users) */}
+            <div style={{ display: "none" }} aria-hidden="true">
+              <input
+                type="text"
+                name="honeypot"
+                value={formState.honeypot}
+                onChange={handleChange}
+                tabIndex={-1}
+                placeholder="Leave this field blank"
+              />
+            </div>
+
             {/* Input Name */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5 text-left">
               <label htmlFor="name" className="text-[10px] font-bold font-mono tracking-widest text-white/40 uppercase">
-                Trainer Name
+                Trainer Name *
               </label>
               <input
                 type="text"
@@ -228,16 +362,26 @@ export default function Contact() {
                 required
                 value={formState.name}
                 onChange={handleChange}
+                onBlur={() => handleBlur("name")}
                 disabled={isSubmitting}
-                className="px-5 py-4 rounded-2xl bg-black/40 border border-white/5 text-sm text-white font-mono placeholder-white/20 focus:outline-none focus:border-[#FFD93D] focus:shadow-[0_0_15px_rgba(255,217,61,0.15)] transition-all duration-300 disabled:opacity-50"
+                aria-invalid={!!errors.name}
+                aria-describedby={errors.name ? "name-error" : undefined}
+                className={`px-5 py-4 rounded-2xl bg-black/40 border text-sm text-white font-mono placeholder-white/20 focus:outline-none focus:border-[#FFD93D] focus:shadow-[0_0_15px_rgba(255,217,61,0.15)] transition-all duration-300 disabled:opacity-50
+                  ${touched.name && errors.name ? "border-red-500/50 focus:border-red-500 focus:shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "border-white/5"}
+                `}
                 placeholder="Enter name..."
               />
+              {touched.name && errors.name && (
+                <span id="name-error" className="text-[10px] font-mono text-red-400 mt-1 pl-1">
+                  {errors.name}
+                </span>
+              )}
             </div>
 
             {/* Input Email */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5 text-left">
               <label htmlFor="email" className="text-[10px] font-bold font-mono tracking-widest text-white/40 uppercase">
-                Trainer Email
+                Trainer Email *
               </label>
               <input
                 type="email"
@@ -246,16 +390,74 @@ export default function Contact() {
                 required
                 value={formState.email}
                 onChange={handleChange}
+                onBlur={() => handleBlur("email")}
                 disabled={isSubmitting}
-                className="px-5 py-4 rounded-2xl bg-black/40 border border-white/5 text-sm text-white font-mono placeholder-white/20 focus:outline-none focus:border-[#FFD93D] focus:shadow-[0_0_15px_rgba(255,217,61,0.15)] transition-all duration-300 disabled:opacity-50"
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "email-error" : undefined}
+                className={`px-5 py-4 rounded-2xl bg-black/40 border text-sm text-white font-mono placeholder-white/20 focus:outline-none focus:border-[#FFD93D] focus:shadow-[0_0_15px_rgba(255,217,61,0.15)] transition-all duration-300 disabled:opacity-50
+                  ${touched.email && errors.email ? "border-red-500/50 focus:border-red-500 focus:shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "border-white/5"}
+                `}
                 placeholder="Enter email..."
               />
+              {touched.email && errors.email && (
+                <span id="email-error" className="text-[10px] font-mono text-red-400 mt-1 pl-1">
+                  {errors.email}
+                </span>
+              )}
+            </div>
+
+            {/* Row: Subject & Optional Company */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Input Subject */}
+              <div className="flex flex-col gap-1.5 text-left">
+                <label htmlFor="subject" className="text-[10px] font-bold font-mono tracking-widest text-white/40 uppercase">
+                  Subject *
+                </label>
+                <input
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  required
+                  value={formState.subject}
+                  onChange={handleChange}
+                  onBlur={() => handleBlur("subject")}
+                  disabled={isSubmitting}
+                  aria-invalid={!!errors.subject}
+                  aria-describedby={errors.subject ? "subject-error" : undefined}
+                  className={`px-5 py-4 rounded-2xl bg-black/40 border text-sm text-white font-mono placeholder-white/20 focus:outline-none focus:border-[#FFD93D] focus:shadow-[0_0_15px_rgba(255,217,61,0.15)] transition-all duration-300 disabled:opacity-50
+                    ${touched.subject && errors.subject ? "border-red-500/50 focus:border-red-500 focus:shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "border-white/5"}
+                  `}
+                  placeholder="Subject of message..."
+                />
+                {touched.subject && errors.subject && (
+                  <span id="subject-error" className="text-[10px] font-mono text-red-400 mt-1 pl-1">
+                    {errors.subject}
+                  </span>
+                )}
+              </div>
+
+              {/* Input Company (Optional) */}
+              <div className="flex flex-col gap-1.5 text-left">
+                <label htmlFor="company" className="text-[10px] font-bold font-mono tracking-widest text-white/40 uppercase">
+                  Company Name (Optional)
+                </label>
+                <input
+                  type="text"
+                  id="company"
+                  name="company"
+                  value={formState.company}
+                  onChange={handleChange}
+                  disabled={isSubmitting}
+                  className="px-5 py-4 rounded-2xl bg-black/40 border border-white/5 text-sm text-white font-mono placeholder-white/20 focus:outline-none focus:border-[#FFD93D] focus:shadow-[0_0_15px_rgba(255,217,61,0.15)] transition-all duration-300 disabled:opacity-50"
+                  placeholder="Enter organization..."
+                />
+              </div>
             </div>
 
             {/* Input Message */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5 text-left">
               <label htmlFor="message" className="text-[10px] font-bold font-mono tracking-widest text-white/40 uppercase">
-                Battle Strategy / Message
+                Battle Strategy / Message *
               </label>
               <textarea
                 id="message"
@@ -264,40 +466,35 @@ export default function Contact() {
                 rows={5}
                 value={formState.message}
                 onChange={handleChange}
+                onBlur={() => handleBlur("message")}
                 disabled={isSubmitting}
-                className="px-5 py-4 rounded-2xl bg-black/40 border border-white/5 text-sm text-white font-mono placeholder-white/20 focus:outline-none focus:border-[#FFD93D] focus:shadow-[0_0_15px_rgba(255,217,61,0.15)] transition-all duration-300 disabled:opacity-50 resize-none"
-                placeholder="Write your brief..."
+                aria-invalid={!!errors.message}
+                aria-describedby={errors.message ? "message-error" : undefined}
+                className={`px-5 py-4 rounded-2xl bg-black/40 border text-sm text-white font-mono placeholder-white/20 focus:outline-none focus:border-[#FFD93D] focus:shadow-[0_0_15px_rgba(255,217,61,0.15)] transition-all duration-300 disabled:opacity-50 resize-none
+                  ${touched.message && errors.message ? "border-red-500/50 focus:border-red-500 focus:shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "border-white/5"}
+                `}
+                placeholder="Write your brief (minimum 20 characters)..."
               />
+              {touched.message && errors.message && (
+                <span id="message-error" className="text-[10px] font-mono text-red-400 mt-1 pl-1">
+                  {errors.message}
+                </span>
+              )}
             </div>
 
-            {/* Submit button: Charge & Send */}
-            <button
+            {/* Submit button: Modular LoadingButton */}
+            <LoadingButton
               type="submit"
-              disabled={isSubmitting || !formState.name || !formState.email || !formState.message}
-              className="relative overflow-hidden w-full py-4.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#FFD93D]/30 hover:bg-[#FFD93D]/5 text-white hover:text-[#FFD93D] font-mono text-xs font-bold tracking-widest uppercase transition-all duration-300 cursor-pointer disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:bg-transparent disabled:hover:text-white"
-            >
-              {/* Charging electricity meter */}
-              {isSubmitting && (
-                <div 
-                  className="absolute inset-0 bg-[#FFD93D]/10 h-full transition-all duration-100 border-r border-[#FFD93D]/35" 
-                  style={{ width: `${chargeProgress}%` }}
-                />
-              )}
-
-              <span className="relative z-10 flex items-center justify-center gap-2">
-                {isSubmitting ? (
-                  <>⚡ Charging Engine ({chargeProgress}%) ⚡</>
-                ) : (
-                  <>
-                    <Send size={13} />
-                    Charge &amp; Send Message
-                  </>
-                )}
-              </span>
-            </button>
+              disabled={isSubmitting || Object.keys(validateForm(formState)).length > 0}
+              isSubmitting={isSubmitting}
+              isSubmitted={isSubmitted}
+            />
           </form>
         </div>
       </div>
+
+      {/* Global Toast Container */}
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </section>
   );
 }

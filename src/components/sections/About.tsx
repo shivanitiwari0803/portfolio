@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Activity, MapPin, GraduationCap, Code2, Cpu, Briefcase, BookOpen, Award } from "lucide-react";
+import { Activity, MapPin, GraduationCap, Code2, Cpu, Briefcase, BookOpen, Award, Sun, Flame, Zap, Palette, Eye, Globe, Rocket } from "lucide-react";
 import { EASE_APPLE } from "@/lib/motion";
 
 // Custom spark and blink animated Pikachu SVG avatar
@@ -145,16 +145,15 @@ interface BadgeItem {
   name: string;
   desc: string;
   color: string;
-  icon: string;
 }
 
 const BADGES: BadgeItem[] = [
-  { id: "solar", name: "Solar Badge", desc: "Engineered Y2 Solar web systems.", color: "#FFD93D", icon: "☀️" },
-  { id: "volcano", name: "Volcano Badge", desc: "Reduced Mistral and Cohere API latencies.", color: "#FF5722", icon: "🌋" },
-  { id: "thunder", name: "Thunder Badge", desc: "Draggable Matter.js physics worlds.", color: "#FFEB3B", icon: "⚡" },
-  { id: "rainbow", name: "Rainbow Badge", desc: "Crafted interactive macOS layouts.", color: "#E040FB", icon: "🌈" },
-  { id: "soul", name: "Soul Badge", desc: "9.32 BCA cumulative CGPA scores.", color: "#9C27B0", icon: "🔮" },
-  { id: "earth", name: "Earth Badge", desc: "Optimized structured code templates.", color: "#4CAF50", icon: "🌍" },
+  { id: "solar", name: "Solar Badge", desc: "Engineered Y2 Solar web systems.", color: "#FFD93D" },
+  { id: "volcano", name: "Volcano Badge", desc: "Reduced Mistral and Cohere API latencies.", color: "#FF5722" },
+  { id: "thunder", name: "Thunder Badge", desc: "Draggable Matter.js physics worlds.", color: "#FFEB3B" },
+  { id: "rainbow", name: "Rainbow Badge", desc: "Crafted interactive macOS layouts.", color: "#E040FB" },
+  { id: "soul", name: "Soul Badge", desc: "9.32 BCA cumulative CGPA scores.", color: "#9C27B0" },
+  { id: "earth", name: "Earth Badge", desc: "Optimized structured code templates.", color: "#4CAF50" },
 ];
 
 export default function About() {
@@ -249,26 +248,36 @@ export default function About() {
               <span className="text-[10px] font-bold font-mono tracking-wider text-white/40 uppercase">League Badges (6/6)</span>
               
               <div className="grid grid-cols-6 gap-2 mt-1 relative">
-                {BADGES.map((badge) => (
-                  <div
-                    key={badge.id}
-                    onMouseEnter={() => setHoveredBadge(badge.id)}
-                    onMouseLeave={() => setHoveredBadge(null)}
-                    className="relative flex items-center justify-center"
-                  >
-                    <motion.div
-                      whileHover={{ scale: 1.15, rotate: 8 }}
-                      className="w-10 h-10 rounded-full bg-black/60 border border-white/10 flex items-center justify-center text-white/60 hover:text-white cursor-help transition-all duration-300 shadow-md text-sm"
-                      style={{
-                        borderColor: hoveredBadge === badge.id ? badge.color : "rgba(255,255,255,0.1)",
-                        boxShadow: hoveredBadge === badge.id ? `0 0 12px ${badge.color}33` : "none",
-                        color: hoveredBadge === badge.id ? badge.color : "rgba(255,255,255,0.6)"
-                      }}
+                {BADGES.map((badge) => {
+                  const badgeIcons: Record<string, React.ReactNode> = {
+                    solar: <Sun size={15} />,
+                    volcano: <Flame size={15} />,
+                    thunder: <Zap size={15} />,
+                    rainbow: <Palette size={15} />,
+                    soul: <Eye size={15} />,
+                    earth: <Globe size={15} />,
+                  };
+                  return (
+                    <div
+                      key={badge.id}
+                      onMouseEnter={() => setHoveredBadge(badge.id)}
+                      onMouseLeave={() => setHoveredBadge(null)}
+                      className="relative flex items-center justify-center"
                     >
-                      {badge.icon}
-                    </motion.div>
-                  </div>
-                ))}
+                      <motion.div
+                        whileHover={{ scale: 1.15, rotate: 8 }}
+                        className="w-10 h-10 rounded-full bg-black/60 border border-white/10 flex items-center justify-center hover:text-white cursor-help transition-all duration-300 shadow-md text-sm"
+                        style={{
+                          borderColor: hoveredBadge === badge.id ? badge.color : "rgba(255,255,255,0.1)",
+                          boxShadow: hoveredBadge === badge.id ? `0 0 12px ${badge.color}33` : "none",
+                          color: hoveredBadge === badge.id ? badge.color : "rgba(255,255,255,0.6)"
+                        }}
+                      >
+                        {badgeIcons[badge.id]}
+                      </motion.div>
+                    </div>
+                  );
+                })}
               </div>
 
               {/* Tooltip detail inside card */}
@@ -352,22 +361,22 @@ export default function About() {
             { 
               title: "AI-Powered Apps", 
               desc: "Integrating LLM pipelines, prompt benchmarks, and custom automated scoring engines.", 
-              icon: "🚀" 
+              icon: <Rocket size={18} className="text-[#FFD93D]" /> 
             },
             { 
               title: "Interactive Frontends", 
               desc: "Crafting fluid Framer Motion states, three.js layers, and responsive visual simulators.", 
-              icon: "⚡" 
+              icon: <Zap size={18} className="text-[#4FC3F7]" /> 
             },
             { 
               title: "Full Stack Platforms", 
               desc: "Architecting Next.js nodes, secure Supabase queries, and robust API routers.", 
-              icon: "🌐" 
+              icon: <Globe size={18} className="text-white/80" /> 
             },
             { 
               title: "AI Agents & Automation", 
               desc: "Exploring autonomous agent loop workflows, function tools, and LLM orchestration.", 
-              icon: "🤖" 
+              icon: <Cpu size={18} className="text-[#A5FF6A]" /> 
             },
           ].map((item, idx) => (
             <motion.div
@@ -380,7 +389,7 @@ export default function About() {
               className="relative p-5 rounded-2xl border border-white/5 bg-[#171717]/60 backdrop-blur-md transition-all duration-300 transform-gpu flex flex-col justify-between min-h-[140px]"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xl">{item.icon}</span>
+                <span>{item.icon}</span>
                 <span className="text-[9px] font-bold font-mono text-white/30 uppercase tracking-widest">Active</span>
               </div>
               <div className="flex flex-col gap-1 mt-4">

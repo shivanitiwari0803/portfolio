@@ -414,7 +414,7 @@ export default function Projects() {
               </div>
 
               <h3 className="text-xl sm:text-2xl font-display font-extrabold text-white tracking-tight uppercase group-hover:text-[#FFD93D] transition-colors text-left">
-                🚀 More Projects Coming Soon
+                More Projects Coming Soon
               </h3>
               <p className="text-xs sm:text-sm text-[#9E9E9E] leading-relaxed font-light text-left">
                 I&apos;m continuously building production-ready applications in AI, Full Stack Development, modern frontend engineering, and interactive web experiences. New projects are currently in development and will be added soon.
@@ -424,7 +424,11 @@ export default function Projects() {
             {/* Card Footer */}
             <div className="border-t border-white/5 pt-3 mt-5 flex justify-between items-center text-[8px] font-mono text-white/30 uppercase">
               <span>Next Release: Loading...</span>
-              <span className="text-[#FFD93D]">✨</span>
+              <span className="text-[#FFD93D] flex items-center">
+                <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 fill-current">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+              </span>
             </div>
           </div>
         </div>

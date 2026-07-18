@@ -389,7 +389,11 @@ export const PhysicsCard: React.FC<PhysicsCardProps> = React.memo(({
             <span className="font-display font-extrabold text-[10px] sm:text-[12px] text-white tracking-tight uppercase truncate max-w-[85px]">
               {skill.name.split(" ")[0]}
             </span>
-            <span className="text-[10px] text-[#FFD93D] font-bold">⚡</span>
+            <span className="text-[#FFD93D] flex items-center">
+              <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 fill-current">
+                <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" />
+              </svg>
+            </span>
           </div>
 
           {/* Centered Image/Icon Frame - Glows in Brand Color on Hover */}

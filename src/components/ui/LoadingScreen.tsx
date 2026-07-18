@@ -11,6 +11,7 @@ export default function LoadingScreen() {
     // Check if user has already visited and skipped the loader
     const skipIntro = localStorage.getItem("skip-intro");
     if (skipIntro === "true") {
+      document.documentElement.classList.add("loading-complete");
       setLoading(false);
       setProgress(100);
       return;
@@ -30,6 +31,8 @@ export default function LoadingScreen() {
     // Hide loader after 2.5s and remember preference
     const timeout = setTimeout(() => {
       localStorage.setItem("skip-intro", "true");
+      document.documentElement.classList.add("loading-complete");
+      window.dispatchEvent(new Event("loading-complete"));
       setLoading(false);
     }, 2500);
 
@@ -41,6 +44,8 @@ export default function LoadingScreen() {
 
   const handleSkip = () => {
     localStorage.setItem("skip-intro", "true");
+    document.documentElement.classList.add("loading-complete");
+    window.dispatchEvent(new Event("loading-complete"));
     setLoading(false);
   };
 
@@ -51,22 +56,22 @@ export default function LoadingScreen() {
           initial={{ opacity: 1 }}
           exit={{ 
             opacity: 0,
-            scale: 1.05,
-            transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } 
+            scale: 1.03,
+            transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } 
           }}
           className="fixed inset-0 bg-[#0A0A0A] z-[999999] flex flex-col items-center justify-center overflow-hidden"
         >
           {/* Subtle lightning flashing behind Pokéball */}
           <motion.div 
             animate={{ 
-              opacity: [0.03, 0.12, 0.03, 0.08, 0.03],
+              opacity: [0.02, 0.08, 0.02, 0.06, 0.02],
             }}
             transition={{
               duration: 2.2,
               repeat: Infinity,
               ease: "easeInOut"
             }}
-            className="absolute inset-0 bg-[#FFD93D]/10 pointer-events-none blur-3xl rounded-full"
+            className="absolute inset-0 bg-[#FFD93D]/5 pointer-events-none blur-3xl rounded-full"
           />
 
           <div className="relative flex flex-col items-center justify-center scale-90 sm:scale-100">
@@ -203,20 +208,26 @@ export default function LoadingScreen() {
           </div>
 
           {/* Loading Subtitle & Brand Introduction */}
-          <div className="mt-12 flex flex-col items-center gap-3">
-            <div className="text-[10px] font-semibold tracking-[0.25em] text-[#FFD93D] font-mono uppercase">
-              Initializing Experience...
-            </div>
+          <div className="mt-12 flex flex-col items-center gap-6 max-w-xl text-center px-6">
+            <motion.h1 
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+              className="text-2xl sm:text-4xl font-display font-black text-white uppercase tracking-wider leading-tight"
+            >
+              Building My Dream, <br />
+              <span className="text-[#FFD93D] drop-shadow-[0_0_12px_rgba(255,217,61,0.25)]">One Commit</span> at a Time.
+            </motion.h1>
             
             {/* Percentage indicator */}
-            <div className="text-2xl font-bold font-display text-white tracking-wide">
+            <div className="text-3xl font-bold font-display text-white/90">
               {progress}%
             </div>
 
             {/* Premium slim progress bar */}
-            <div className="w-48 h-[2px] bg-white/10 rounded-full overflow-hidden mt-1 relative">
+            <div className="w-56 h-[3px] bg-white/10 rounded-full overflow-hidden mt-1 relative border border-white/5">
               <motion.div 
-                className="h-full bg-[#FFD93D] shadow-[0_0_8px_#FFD93D]"
+                className="h-full bg-[#FFD93D] shadow-[0_0_10px_#FFD93D]"
                 initial={{ width: "0%" }}
                 animate={{ width: `${progress}%` }}
                 transition={{ ease: "easeOut" }}
@@ -224,21 +235,19 @@ export default function LoadingScreen() {
             </div>
 
             {/* Tasteful tribute intro message */}
-            <motion.div
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-center max-w-[280px] mt-4"
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.4 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="text-[10px] sm:text-xs font-mono text-white/80 leading-relaxed font-light mt-1"
             >
-              <p className="text-[10px] sm:text-[11px] font-mono text-white/50 leading-relaxed font-light">
-                Built with modern web technologies and inspired by the energy of Pikachu ⚡
-              </p>
-            </motion.div>
+              A portfolio crafted with a subtle tribute to Pikachu.
+            </motion.p>
 
             {/* Skip Option */}
             <button
               onClick={handleSkip}
-              className="mt-6 text-[9px] font-bold font-mono text-white/30 hover:text-white/60 uppercase tracking-widest transition-colors cursor-pointer border border-white/5 px-3 py-1 rounded-full bg-white/[0.01]"
+              className="mt-4 text-[9px] font-bold font-mono text-white/20 hover:text-white/50 uppercase tracking-widest transition-colors cursor-pointer border border-white/5 px-3.5 py-1 rounded-full bg-white/[0.01]"
             >
               Skip Intro
             </button>
