@@ -101,7 +101,7 @@ const PikachuAvatar = () => {
 };
 
 // Smooth numeric counter animation
-const Counter = ({ value, duration = 1200, isFloat = false }: { value: number; duration?: number; isFloat?: boolean }) => {
+const Counter = ({ value, duration = 1200, isFloat = false, decimals = 1, suffix = "" }: { value: number; duration?: number; isFloat?: boolean; decimals?: number; suffix?: string }) => {
   const [count, setCount] = useState(0);
   const elementRef = useRef<HTMLSpanElement>(null);
   const hasTriggeredRef = useRef(false);
@@ -135,7 +135,7 @@ const Counter = ({ value, duration = 1200, isFloat = false }: { value: number; d
 
   return (
     <span ref={elementRef}>
-      {isFloat ? count.toFixed(2) : Math.floor(count)}
+      {isFloat ? count.toFixed(decimals) : Math.floor(count).toLocaleString()}{suffix}
     </span>
   );
 };
@@ -162,7 +162,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="relative z-10 pt-28 pb-16 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full select-none flex flex-col gap-14 overflow-hidden bg-background"
+      className="relative z-10 pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full select-none flex flex-col gap-14 overflow-hidden bg-background"
     >
       {/* Section Header */}
       <div className="flex flex-col gap-2.5 text-left">
@@ -174,9 +174,174 @@ export default function About() {
         </h2>
       </div>
 
-      {/* Main Grid: Left Trainer Card, Right Details (perfectly aligned with increased padding) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center w-full">
-        
+      {/* 1. MOBILE & TABLET PORTRAIT LAYOUT (hidden md:flex) */}
+      <div className="flex md:hidden flex-col items-center justify-center text-center gap-10 w-full max-w-sm sm:max-w-md mx-auto">
+        {/* Mobile Trainer Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 30 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: EASE_APPLE }}
+          className="relative w-full rounded-3xl bg-[#171717] border border-[#FFD93D]/20 shadow-2xl p-5 overflow-hidden flex flex-col items-center text-center gap-5"
+        >
+          {/* Ambient Pikachu Yellow Glow */}
+          <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-[#FFD93D]/5 blur-[60px] pointer-events-none" />
+
+          {/* Trainer Card Header */}
+          <div className="flex items-center justify-between border-b border-white/5 pb-3 w-full">
+            <div className="flex flex-col items-start text-left">
+              <span className="text-[9px] font-bold font-mono tracking-widest text-white/40 uppercase">Trainer Card</span>
+              <span className="text-xs font-bold font-mono text-[#FFD93D]">IDNo. 08039</span>
+            </div>
+            <div className="px-2 py-0.5 rounded bg-[#FFD93D]/10 border border-[#FFD93D]/30 text-white font-mono text-[8px] font-bold uppercase tracking-wider">
+              Active League
+            </div>
+          </div>
+
+          {/* Avatar (centered, responsive, aspect-square, 72-80px) */}
+          <div className="relative w-18 h-18 sm:w-20 sm:h-20 aspect-square rounded-2xl border-2 border-white/10 bg-black/60 flex items-center justify-center overflow-hidden shrink-0 shadow-inner group-hover:border-[#FFD93D]/45 transition-colors duration-300">
+            <PikachuAvatar />
+          </div>
+
+          {/* Trainer Name (responsive clamp, allow wrapping, text-center) */}
+          <h3 className="text-[clamp(1.25rem,5vw,1.65rem)] font-display font-extrabold text-white tracking-tight uppercase text-center break-words w-full px-2">
+            Shivani Tiwari
+          </h3>
+
+          {/* Role */}
+          <p className="text-xs sm:text-sm font-semibold text-white/50 tracking-wide font-mono uppercase flex flex-wrap items-center justify-center gap-1.5 leading-normal w-full px-2">
+            <Activity size={12} className="text-[#A5FF6A]" />
+            Trainer: Full Stack
+          </p>
+
+          {/* Location */}
+          <div className="flex items-center justify-center gap-1 text-[10px] sm:text-xs text-white/60 font-mono w-full px-2">
+            <MapPin size={11} className="text-[#FFD93D]" />
+            Delhi, India
+          </div>
+
+          {/* XP Progress Bar */}
+          <div className="flex flex-col gap-2 bg-white/[0.02] border border-white/5 rounded-2xl p-3 w-full mt-1">
+            <div className="flex justify-between items-baseline text-[10px] sm:text-xs font-mono w-full">
+              <span className="text-white/40 font-bold uppercase">Experience Points</span>
+              <span className="text-white font-bold text-right">
+                <Counter value={8850} duration={1500} /> / <Counter value={10000} duration={1500} /> XP
+              </span>
+            </div>
+            <div className="w-full h-3 bg-black rounded-full overflow-hidden p-[2px] border border-white/10">
+              <motion.div
+                initial={{ width: "0%" }}
+                whileInView={{ width: "88.5%" }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.5, ease: EASE_APPLE, delay: 0.2 }}
+                className="h-full bg-gradient-to-r from-[#FFD93D] to-[#ffe56c] rounded-full shadow-[0_0_8px_#FFD93D] flex items-center justify-end px-1"
+              >
+                <span className="text-[7px] text-black font-extrabold font-mono">
+                  <Counter value={88.5} duration={1500} isFloat={true} decimals={1} suffix="%" />
+                </span>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* League Badges (2 columns on mobile, 3 columns on tablet) */}
+          <div className="flex flex-col gap-2.5 bg-white/[0.02] border border-white/5 rounded-2xl p-3 w-full">
+            <span className="text-[9px] font-bold font-mono tracking-wider text-white/40 uppercase">League Badges (6/6)</span>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mt-1 relative w-full justify-items-center">
+              {BADGES.map((badge) => {
+                const badgeIcons: Record<string, React.ReactNode> = {
+                  solar: <Sun size={15} />,
+                  volcano: <Flame size={15} />,
+                  thunder: <Zap size={15} />,
+                  rainbow: <Palette size={15} />,
+                  soul: <Eye size={15} />,
+                  earth: <Globe size={15} />,
+                };
+                return (
+                  <div
+                    key={badge.id}
+                    onClick={() => setHoveredBadge(hoveredBadge === badge.id ? null : badge.id)}
+                    className="relative flex items-center justify-center w-full"
+                  >
+                    <motion.div
+                      whileTap={{ scale: 0.95 }}
+                      className="w-10 h-10 rounded-full bg-black/60 border border-white/10 flex items-center justify-center hover:text-white cursor-pointer transition-all duration-300 shadow-md text-sm aspect-square shrink-0"
+                      style={{
+                        borderColor: hoveredBadge === badge.id ? badge.color : "rgba(255,255,255,0.1)",
+                        boxShadow: hoveredBadge === badge.id ? `0 0 12px ${badge.color}33` : "none",
+                        color: hoveredBadge === badge.id ? badge.color : "rgba(255,255,255,0.6)"
+                      }}
+                    >
+                      {badgeIcons[badge.id]}
+                    </motion.div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Tooltip detail inside card */}
+            <div className="min-h-9 mt-2 flex items-center justify-center bg-black/40 rounded-xl px-2.5 py-1.5 border border-white/5 overflow-hidden w-full">
+              <span className="text-[9px] text-center font-mono leading-tight text-white/70 block w-full px-1">
+                {hoveredBadge ? (
+                  <span className="block break-words">
+                    <strong style={{ color: BADGES.find(b => b.id === hoveredBadge)?.color }}>
+                      {BADGES.find(b => b.id === hoveredBadge)?.name}:
+                    </strong>{" "}
+                    {BADGES.find(b => b.id === hoveredBadge)?.desc}
+                  </span>
+                ) : (
+                  <span className="text-white/40 uppercase tracking-widest">Tap a badge to inspect</span>
+                )}
+              </span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Mobile Biography & Description */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: EASE_APPLE, delay: 0.1 }}
+          className="flex flex-col gap-8 w-full text-center items-center mt-2 px-2"
+        >
+          <div className="flex flex-col gap-5 text-white/70 font-light text-sm sm:text-base leading-[1.8] max-w-prose">
+            <p>
+              I am <span className="text-white font-semibold">Shivani Tiwari</span>, a Full Stack Developer focused on building fast, scalable, and visually engaging web applications. I enjoy transforming complex ideas into polished digital products that combine clean design, modern engineering, and exceptional user experience.
+            </p>
+            <p>
+              During my internship at <span className="text-white font-semibold">Y2 Solar</span>, I engineered a production-ready website with 15+ pages using Next.js, React, Tailwind CSS, Supabase, and Three.js. Alongside full-stack engineering, I developed Arena AI—a comparison platform for LLMs with automated scoring and API latency optimizations—always focusing on performance, usability, and clean architecture.
+            </p>
+          </div>
+
+          {/* Mobile Highlights Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full border-t border-white/5 pt-6 text-left">
+            {[
+              { label: "Bachelor of Computer Applications (BCA) Graduate", icon: <GraduationCap size={16} className="text-[#FFD93D]" /> },
+              { label: "Full Stack Developer", icon: <Code2 size={16} className="text-[#FFD93D]" /> },
+              { label: "AI Specialist & Enthusiast", icon: <Cpu size={16} className="text-[#FFD93D]" /> },
+              { label: "Based in Delhi, India", icon: <MapPin size={16} className="text-[#FFD93D]" /> },
+              { label: "Available for Full-Time Roles", icon: <Briefcase size={16} className="text-[#FFD93D]" /> },
+              { label: "Continuous Learner", icon: <BookOpen size={16} className="text-[#FFD93D]" /> },
+            ].map((hl, idx) => (
+              <div 
+                key={idx} 
+                className="highlight-item flex items-center gap-3 px-4 py-3 rounded-xl border border-white/5 bg-white/[0.01]"
+              >
+                <span className="flex-shrink-0 flex items-center justify-center p-1.5 rounded-lg bg-[#FFD93D]/10">
+                  {hl.icon}
+                </span>
+                <span className="text-xs sm:text-sm font-semibold text-white/80 tracking-wide leading-snug">
+                  {hl.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+
+      {/* 2. DESKTOP & TABLET LANDSCAPE LAYOUT (hidden md:grid) */}
+      <div className="hidden md:grid grid-cols-12 gap-12 lg:gap-16 items-center w-full">
         {/* Left Side: Trainer Card */}
         <div className="col-span-12 lg:col-span-5 flex flex-col items-center justify-center w-full">
           <motion.div
@@ -185,13 +350,13 @@ export default function About() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: EASE_APPLE }}
             whileHover={{ y: -8 }}
-            className="relative w-full max-w-[420px] rounded-3xl bg-[#171717] border border-[#FFD93D]/20 shadow-2xl p-6 sm:p-7 overflow-hidden cursor-pointer group transform-gpu"
+            className="relative w-full max-w-[420px] rounded-3xl bg-[#171717] border border-[#FFD93D]/20 shadow-2xl p-6 sm:p-7 overflow-hidden cursor-pointer group transform-gpu flex flex-col gap-6"
           >
             {/* Ambient Radial Pikachu Yellow Glow */}
             <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-[#FFD93D]/5 blur-[80px] pointer-events-none transition-all duration-700 group-hover:bg-[#FFD93D]/10" />
 
             {/* Trainer Card Header */}
-            <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-5">
+            <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-1">
               <div className="flex flex-col">
                 <span className="text-[10px] font-bold font-mono tracking-widest text-white/40 uppercase">Trainer Card</span>
                 <span className="text-xs font-bold font-mono text-[#FFD93D]">IDNo. 08039</span>
@@ -202,8 +367,8 @@ export default function About() {
             </div>
 
             {/* Profile split */}
-            <div className="flex items-center gap-5 mb-6">
-              {/* Photo Area: Custom Blinking & Sparking Pikachu Avatar */}
+            <div className="flex items-center gap-5 mb-1">
+              {/* Photo Area */}
               <div className="relative w-24 h-24 rounded-2xl border-2 border-white/10 bg-black/60 flex items-center justify-center overflow-hidden shrink-0 shadow-inner group-hover:border-[#FFD93D]/45 transition-colors duration-300">
                 <PikachuAvatar />
               </div>
@@ -225,10 +390,12 @@ export default function About() {
             </div>
 
             {/* XP progress bar */}
-            <div className="flex flex-col gap-2 mb-6 bg-white/[0.02] border border-white/5 rounded-2xl p-4">
+            <div className="flex flex-col gap-2 mb-1 bg-white/[0.02] border border-white/5 rounded-2xl p-4">
               <div className="flex justify-between items-baseline text-xs font-mono">
                 <span className="text-white/40 font-bold uppercase">Experience Points</span>
-                <span className="text-white font-bold text-right">8,850 / 10,000 XP</span>
+                <span className="text-white font-bold text-right">
+                  <Counter value={8850} duration={1500} /> / <Counter value={10000} duration={1500} /> XP
+                </span>
               </div>
               <div className="w-full h-3.5 bg-black rounded-full overflow-hidden p-[2px] border border-white/10">
                 <motion.div
@@ -238,7 +405,9 @@ export default function About() {
                   transition={{ duration: 1.5, ease: EASE_APPLE, delay: 0.2 }}
                   className="h-full bg-gradient-to-r from-[#FFD93D] to-[#ffe56c] rounded-full shadow-[0_0_8px_#FFD93D] flex items-center justify-end px-1"
                 >
-                  <span className="text-[7px] text-black font-extrabold font-mono">88.5%</span>
+                  <span className="text-[7px] text-black font-extrabold font-mono">
+                    <Counter value={88.5} duration={1500} isFloat={true} decimals={1} suffix="%" />
+                  </span>
                 </motion.div>
               </div>
             </div>
@@ -247,7 +416,7 @@ export default function About() {
             <div className="flex flex-col gap-2 bg-white/[0.02] border border-white/5 rounded-2xl p-4">
               <span className="text-[10px] font-bold font-mono tracking-wider text-white/40 uppercase">League Badges (6/6)</span>
               
-              <div className="grid grid-cols-6 gap-2 mt-1 relative">
+              <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 mt-1 relative">
                 {BADGES.map((badge) => {
                   const badgeIcons: Record<string, React.ReactNode> = {
                     solar: <Sun size={15} />,
@@ -296,7 +465,6 @@ export default function About() {
                 </span>
               </div>
             </div>
-
           </motion.div>
         </div>
 
@@ -309,11 +477,11 @@ export default function About() {
           className="col-span-12 lg:col-span-7 flex flex-col gap-10 text-left"
         >
           {/* Bio paragraphs */}
-          <div className="flex flex-col gap-6 text-left">
-            <p className="text-lg md:text-xl text-white/70 leading-relaxed font-light">
+          <div className="flex flex-col gap-6 text-left max-w-[65ch]">
+            <p className="text-base md:text-lg text-white/70 leading-[1.8] font-light">
               I am <span className="text-white font-semibold">Shivani Tiwari</span>, a Full Stack Developer focused on building fast, scalable, and visually engaging web applications. I enjoy transforming complex ideas into polished digital products that combine clean design, modern engineering, and exceptional user experience.
             </p>
-            <p className="text-lg md:text-xl text-white/70 leading-relaxed font-light">
+            <p className="text-base md:text-lg text-white/70 leading-[1.8] font-light">
               During my internship at <span className="text-white font-semibold">Y2 Solar</span>, I engineered a production-ready website with 15+ pages using Next.js, React, Tailwind CSS, Supabase, and Three.js. Alongside full-stack engineering, I developed Arena AI—a comparison platform for LLMs with automated scoring and API latency optimizations—always focusing on performance, usability, and clean architecture.
             </p>
           </div>
@@ -331,12 +499,12 @@ export default function About() {
               <motion.div 
                 key={idx} 
                 whileHover={{ scale: 1.02 }}
-                className="highlight-item flex items-center gap-3 px-4 py-3 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-300 transform-gpu"
+                className="highlight-item flex items-start sm:items-center gap-3 px-4 py-3 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-300 transform-gpu"
               >
-                <span className="flex items-center justify-center p-1.5 rounded-lg bg-[#FFD93D]/10">
+                <span className="flex-shrink-0 flex items-center justify-center p-1.5 rounded-lg bg-[#FFD93D]/10 mt-0.5 sm:mt-0">
                   {hl.icon}
                 </span>
-                <span className="text-sm font-semibold text-white/80 tracking-wide">
+                <span className="text-sm font-semibold text-white/80 tracking-wide leading-snug">
                   {hl.label}
                 </span>
               </motion.div>

@@ -322,17 +322,17 @@ export const PikachuSilhouette: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center cursor-pointer group">
+    <div className="relative w-full h-full flex items-center justify-center cursor-pointer group max-w-full overflow-hidden aspect-square">
       {/* Visual bounding ring around silhouette */}
-      <div className="absolute w-[290px] h-[290px] rounded-full border border-white/5 bg-white/[0.01] pointer-events-none group-hover:border-[#FFD93D]/10 transition-colors duration-700" />
+      <div className="absolute w-[64%] h-[64%] sm:w-[290px] sm:h-[290px] rounded-full border border-white/5 bg-white/[0.01] pointer-events-none group-hover:border-[#FFD93D]/10 transition-colors duration-700" />
       
       {/* Scanning orbit rings */}
-      <div className="absolute w-[330px] h-[330px] rounded-full border border-dashed border-[#FFD93D]/10 pointer-events-none animate-[spin_50s_linear_infinite]" />
-      <div className="absolute w-[250px] h-[250px] rounded-full border border-dashed border-[#4FC3F7]/5 pointer-events-none animate-[spin_30s_linear_infinite_reverse]" />
+      <div className="absolute w-[76%] h-[76%] sm:w-[330px] sm:h-[330px] rounded-full border border-dashed border-[#FFD93D]/10 pointer-events-none animate-[spin_50s_linear_infinite]" />
+      <div className="absolute w-[58%] h-[58%] sm:w-[250px] sm:h-[250px] rounded-full border border-dashed border-[#4FC3F7]/5 pointer-events-none animate-[spin_30s_linear_infinite_reverse]" />
 
       <canvas
         ref={canvasRef}
-        className="relative z-10 w-[380px] h-[380px] block"
+        className="relative z-10 w-full sm:w-[380px] sm:h-[380px] block max-w-full aspect-square"
       />
     </div>
   );

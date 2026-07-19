@@ -45,6 +45,7 @@ html {
   scroll-behavior: smooth;
   background-color: #0A0A0A;
   color: #ffffff;
+  overflow-x: hidden;
 }
 
 body {
@@ -57,6 +58,13 @@ body {
   color: #ffffff;
   font-family: var(--font-inter), sans-serif;
   overflow-x: hidden;
+}
+
+/* Premium Focus States */
+*:focus-visible {
+  outline: 2px solid #FFD93D;
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
 /* Custom Scrollbar */
