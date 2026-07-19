@@ -3,13 +3,13 @@
 import React, { useEffect, useRef } from "react";
 
 interface Particle {
-  x: number;
-  y: number;
-  originX: number;
-  originY: number;
+  rx: number;
+  ry: number;
+  currentRx: number;
+  currentRy: number;
   vx: number;
   vy: number;
-  size: number;
+  sizeRatio: number;
   alpha: number;
   isTail: boolean;
 }
@@ -24,13 +24,28 @@ interface Spark {
   size: number;
 }
 
+interface TrailParticle {
+  rx: number;
+  ry: number;
+  vx: number;
+  vy: number;
+  alpha: number;
+  sizeRatio: number;
+  life: number;
+  maxLife: number;
+  curveSpeed: number;
+  curveAmount: number;
+}
+
 export const PikachuSilhouette: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: -1000, y: -1000, active: false });
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -38,86 +53,78 @@ export const PikachuSilhouette: React.FC = () => {
     let frameId: number;
     let particles: Particle[] = [];
     const sparks: Spark[] = [];
+    const trailParticles: TrailParticle[] = [];
     let tailCharging = 0; // 0 to 1
     let tailTimer = 0;
-    
-    // Scale for responsive sizing
-    const width = 380;
-    const height = 380;
-    canvas.width = width;
-    canvas.height = height;
 
-    // Define the Pikachu silhouette outline paths (stylized coordinate points)
-    // Scaled for a 200x200 bounding box centered in the 380x380 canvas
-    const cx = 160;
-    const cy = 180;
-    const s = 1.35; // scale
+    const outlinePoints: { rx: number; ry: number; isTail?: boolean }[] = [];
 
-    // Custom coordinates tracing Pikachu's contour
-    const outlinePoints: {x: number; y: number; isTail?: boolean}[] = [];
-
-    const addLine = (x1: number, y1: number, x2: number, y2: number, count: number, isTail = false) => {
+    const addLineRelative = (x1: number, y1: number, x2: number, y2: number, count: number, isTail = false) => {
+      const ox = 14.75;
+      const oy = -2.5;
       for (let i = 0; i <= count; i++) {
         const t = i / count;
-        outlinePoints.push({
-          x: cx + (x1 + (x2 - x1) * t) * s,
-          y: cy + (y1 + (y2 - y1) * t) * s,
-          isTail
-        });
+        const rx = (x1 + (x2 - x1) * t) - ox;
+        const ry = (y1 + (y2 - y1) * t) - oy;
+        outlinePoints.push({ rx, ry, isTail });
       }
     };
 
-    // Trace ears (x: -50 to 50, y: -100 to 100 relative to center)
-    // Left ear (curved pointy)
-    addLine(-25, -25, -55, -85, 20); // bottom ear to tip
-    addLine(-55, -85, -20, -40, 20); // tip back to head
-    
-    // Head top
-    addLine(-20, -40, 20, -40, 15);
-    
-    // Right ear
-    addLine(20, -40, 55, -85, 20);
-    addLine(55, -85, 25, -25, 20);
-    
-    // Right Cheek & Body
-    addLine(25, -25, 35, 10, 15); // right face
-    addLine(35, 10, 45, 60, 20); // right body
-    addLine(45, 60, 25, 80, 15); // right leg
-    
-    // Bottom / feet
-    addLine(25, 80, -25, 80, 20);
-    
-    // Left leg & body
-    addLine(-25, 80, -45, 60, 15);
-    addLine(-45, 60, -35, 10, 20);
-    addLine(-35, 10, -25, -25, 15); // left face
+    addLineRelative(-25, -25, -55, -85, 20);
+    addLineRelative(-55, -85, -20, -40, 20);
+    addLineRelative(-20, -40, 20, -40, 15);
+    addLineRelative(20, -40, 55, -85, 20);
+    addLineRelative(55, -85, 25, -25, 20);
+    addLineRelative(25, -25, 35, 10, 15);
+    addLineRelative(35, 10, 45, 60, 20);
+    addLineRelative(45, 60, 25, 80, 15);
+    addLineRelative(25, 80, -25, 80, 20);
+    addLineRelative(-25, 80, -45, 60, 15);
+    addLineRelative(-45, 60, -35, 10, 20);
+    addLineRelative(-35, 10, -25, -25, 15);
 
-    // Tail (jagged electric lightning shape on the right, connecting to body at x=35, y=45)
-    // Tail bottom connects to right body
-    addLine(35, 45, 60, 45, 12, true);
-    addLine(60, 45, 50, 25, 10, true);
-    addLine(50, 25, 75, 25, 15, true);
-    addLine(75, 25, 65, 0, 12, true);
-    addLine(65, 0, 100, 0, 18, true);
-    addLine(100, 0, 85, -35, 15, true);
-    addLine(85, -35, 125, -45, 20, true); // final tip
-    addLine(125, -45, 95, -15, 15, true); // connecting back
-    addLine(95, -15, 100, 0, 10, true);
+    addLineRelative(35, 45, 48.75, 45, 12, true);
+    addLineRelative(48.75, 45, 43.25, 25, 10, true);
+    addLineRelative(43.25, 25, 57, 25, 15, true);
+    addLineRelative(57, 25, 51.5, 0, 12, true);
+    addLineRelative(51.5, 0, 70.75, 0, 18, true);
+    addLineRelative(70.75, 0, 62.5, -35, 15, true);
+    addLineRelative(62.5, -35, 84.5, -45, 20, true);
+    addLineRelative(84.5, -45, 68, -15, 15, true);
+    addLineRelative(68, -15, 70.75, 0, 10, true);
 
-    // Initialize particles along sampled points
     particles = outlinePoints.map((pt) => ({
-      x: pt.x + (Math.random() - 0.5) * 15,
-      y: pt.y + (Math.random() - 0.5) * 15,
-      originX: pt.x,
-      originY: pt.y,
+      rx: pt.rx,
+      ry: pt.ry,
+      currentRx: pt.rx + (Math.random() - 0.5) * 12,
+      currentRy: pt.ry + (Math.random() - 0.5) * 12,
       vx: 0,
       vy: 0,
-      size: Math.random() * 1.5 + 0.8,
+      sizeRatio: (Math.random() * 1.5 + 0.8) / 380,
       alpha: 0.3 + Math.random() * 0.5,
       isTail: !!pt.isTail,
     }));
 
-    // Mouse movement listeners inside component bounds
+    let width = container.clientWidth;
+    let height = container.clientHeight;
+
+    const handleResize = () => {
+      const rect = container.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      width = rect.width;
+      height = rect.height;
+    };
+
+    handleResize();
+
+    const resizeObserver = new ResizeObserver(() => {
+      handleResize();
+    });
+    resizeObserver.observe(container);
+
     const handleMouseMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       mouseRef.current.x = e.clientX - rect.left;
@@ -131,15 +138,28 @@ export const PikachuSilhouette: React.FC = () => {
       mouseRef.current.active = false;
     };
 
-    // Register click to charge tail manually
+    const getLayoutConfig = () => {
+      const size = Math.min(width, height);
+      const centerX = width / 2;
+      const centerY = height / 2;
+      let targetRatio = 0.512;
+      if (width < 640) {
+        targetRatio = 0.448;
+      } else if (width < 1024) {
+        targetRatio = 0.48;
+      }
+      const s = (targetRatio * size) / 165;
+      return { size, centerX, centerY, s };
+    };
+
     const handleCanvasClick = () => {
-      tailCharging = 1.0; // instantly force discharge!
-      // Spawn extra sparks around tail tip (cx + 125*s, cy - 45*s)
-      const tipX = cx + 125 * s;
-      const tipY = cy - 45 * s;
+      tailCharging = 1.0;
+      const { size, centerX, centerY, s } = getLayoutConfig();
+      const tipX = centerX + 69.75 * s;
+      const tipY = centerY - 42.5 * s;
       for (let i = 0; i < 25; i++) {
         const angle = Math.random() * Math.PI * 2;
-        const speed = 1.5 + Math.random() * 4;
+        const speed = (1.5 + Math.random() * 4) * (size / 380);
         sparks.push({
           x: tipX,
           y: tipY,
@@ -147,156 +167,219 @@ export const PikachuSilhouette: React.FC = () => {
           vy: Math.sin(angle) * speed,
           alpha: 1,
           color: Math.random() > 0.4 ? "#FFD93D" : "#4FC3F7",
-          size: Math.random() * 2 + 1,
+          size: (Math.random() * 2 + 1) * (size / 380),
         });
       }
     };
 
-    canvas.addEventListener("mousemove", handleMouseMove);
-    canvas.addEventListener("mouseleave", handleMouseLeave);
-    canvas.addEventListener("click", handleCanvasClick);
+    container.addEventListener("mousemove", handleMouseMove);
+    container.addEventListener("mouseleave", handleMouseLeave);
+    container.addEventListener("click", handleCanvasClick);
 
-    // Loop
     const tick = (now: number) => {
-      // Clear canvas
+      const { size, centerX, centerY, s } = getLayoutConfig();
       ctx.clearRect(0, 0, width, height);
 
-      // Tail charging timer (emits discharge every 4.5 seconds)
-      tailTimer += 16.7; // approx 60fps frame delta
+      tailTimer += 16.7;
       if (tailTimer >= 4500) {
         tailTimer = 0;
-        tailCharging = 1.0; // discharge trigger
+        tailCharging = 1.0;
       }
 
-      // Decay tail charge flash
       if (tailCharging > 0) {
         tailCharging -= 0.025;
       }
 
       const mouse = mouseRef.current;
+      const relativeMouse = {
+        x: (mouse.x - centerX) / s,
+        y: (mouse.y - centerY) / s,
+        active: mouse.active,
+      };
 
-      // Draw active lightning bolts from tail tip if charging is high
       if (tailCharging > 0.6) {
-        const tipX = cx + 125 * s;
-        const tipY = cy - 45 * s;
-        
+        const tipX = centerX + 69.75 * s;
+        const tipY = centerY - 42.5 * s;
         ctx.strokeStyle = Math.random() > 0.3 ? "#FFD93D" : "#4FC3F7";
         ctx.lineWidth = 1.5;
         ctx.shadowBlur = 15;
         ctx.shadowColor = ctx.strokeStyle;
-        
         ctx.beginPath();
         ctx.moveTo(tipX, tipY);
         let currX = tipX;
         let currY = tipY;
-        
-        // Jagged electricity discharging into space
         for (let j = 0; j < 5; j++) {
-          currX += (Math.random() - 0.2) * 25;
-          currY += (Math.random() - 0.5) * 20 - 15; // tends upward
+          currX += (Math.random() - 0.2) * 25 * (size / 380);
+          currY += ((Math.random() - 0.5) * 20 - 15) * (size / 380);
           ctx.lineTo(currX, currY);
-          
-          // spawn spark at path bend
           if (Math.random() > 0.5) {
             sparks.push({
               x: currX,
               y: currY,
-              vx: (Math.random() - 0.5) * 2,
-              vy: (Math.random() - 0.5) * 2,
+              vx: (Math.random() - 0.5) * 2 * (size / 380),
+              vy: (Math.random() - 0.5) * 2 * (size / 380),
               alpha: 1,
               color: "#FFD93D",
-              size: Math.random() * 1.5 + 0.8,
+              size: (Math.random() * 1.5 + 0.8) * (size / 380),
             });
           }
         }
         ctx.stroke();
       }
 
-      // Update and draw particles
+      if (Math.random() < 0.28) {
+        const maxLife = 55 + Math.random() * 45;
+        trailParticles.push({
+          rx: -14.75 + (Math.random() - 0.5) * 12,
+          ry: 82.5,
+          vx: (Math.random() - 0.5) * 0.28,
+          vy: 0.7 + Math.random() * 0.7,
+          alpha: 0.85 + Math.random() * 0.15,
+          sizeRatio: (Math.random() * 2 + 1) / 380,
+          life: 0,
+          maxLife,
+          curveSpeed: 0.04 + Math.random() * 0.04,
+          curveAmount: 0.2 + Math.random() * 0.3,
+        });
+      }
+
+      for (let i = trailParticles.length - 1; i >= 0; i--) {
+        const p = trailParticles[i];
+        p.life++;
+        if (p.life >= p.maxLife) {
+          trailParticles.splice(i, 1);
+          continue;
+        }
+        p.ry += p.vy;
+        p.rx += p.vx + Math.sin(p.life * p.curveSpeed) * p.curveAmount;
+        p.alpha = 1 - p.life / p.maxLife;
+        const px = centerX + p.rx * s;
+        const py = centerY + p.ry * s;
+        const distCenter = Math.sqrt((px - centerX) ** 2 + (py - centerY) ** 2);
+        if (distCenter > 0.32 * size) {
+          p.alpha *= 0.2;
+        }
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = "#FFD93D";
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = "#FFD93D";
+        ctx.beginPath();
+        ctx.arc(px, py, p.sizeRatio * size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      ctx.save();
+      ctx.strokeStyle = "rgba(255, 217, 61, 0.42)";
+      ctx.lineWidth = 0.95;
+      ctx.shadowBlur = 3.5;
+      ctx.shadowColor = "#FFD93D";
+      ctx.beginPath();
+      let firstBody = true;
       particles.forEach((p) => {
-        // Physics: Spring returning to origin
-        const dxOrigin = p.originX - p.x;
-        const dyOrigin = p.originY - p.y;
-        
-        // Acceleration
-        const springK = 0.05; // spring constant
+        if (!p.isTail) {
+          const floatY = Math.sin(now * 0.002 + p.rx) * 0.12;
+          const px = centerX + p.currentRx * s;
+          const py = centerY + (p.currentRy + floatY) * s;
+          if (firstBody) {
+            ctx.moveTo(px, py);
+            firstBody = false;
+          } else {
+            ctx.lineTo(px, py);
+          }
+        }
+      });
+      const firstBodyParticle = particles.find(p => !p.isTail);
+      if (firstBodyParticle) {
+        const floatY = Math.sin(now * 0.002 + firstBodyParticle.rx) * 0.12;
+        ctx.lineTo(centerX + firstBodyParticle.currentRx * s, centerY + (firstBodyParticle.currentRy + floatY) * s);
+      }
+      ctx.stroke();
+
+      ctx.beginPath();
+      let firstTail = true;
+      particles.forEach((p) => {
+        if (p.isTail) {
+          const floatY = Math.sin(now * 0.002 + p.rx) * 0.12;
+          const px = centerX + p.currentRx * s;
+          const py = centerY + (p.currentRy + floatY) * s;
+          if (firstTail) {
+            ctx.moveTo(px, py);
+            firstTail = false;
+          } else {
+            ctx.lineTo(px, py);
+          }
+        }
+      });
+      ctx.stroke();
+      ctx.restore();
+
+      particles.forEach((p) => {
+        const dxOrigin = p.rx - p.currentRx;
+        const dyOrigin = p.ry - p.currentRy;
+        const springK = 0.05;
         p.vx += dxOrigin * springK;
         p.vy += dyOrigin * springK;
-
-        // Friction
         const friction = 0.82;
         p.vx *= friction;
         p.vy *= friction;
-
-        // Mouse interaction (repel)
-        if (mouse.active) {
-          const dxMouse = p.x - mouse.x;
-          const dyMouse = p.y - mouse.y;
+        if (relativeMouse.active) {
+          const dxMouse = p.currentRx - relativeMouse.x;
+          const dyMouse = p.currentRy - relativeMouse.y;
           const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
-          const forceDist = 45; // range of mouse repel
-
+          const forceDist = 35;
           if (distMouse < forceDist) {
             const force = (forceDist - distMouse) / forceDist;
             const angle = Math.atan2(dyMouse, dxMouse);
-            // push away
-            p.vx += Math.cos(angle) * force * 4.2;
-            p.vy += Math.sin(angle) * force * 4.2;
-
-            // Occasional micro electrical spark between mouse and particle
+            p.vx += Math.cos(angle) * force * 3.5;
+            p.vy += Math.sin(angle) * force * 3.5;
             if (Math.random() < 0.03) {
               ctx.strokeStyle = "rgba(255, 217, 61, 0.4)";
               ctx.lineWidth = 0.5;
               ctx.beginPath();
               ctx.moveTo(mouse.x, mouse.y);
-              ctx.lineTo(p.x, p.y);
+              ctx.lineTo(centerX + p.currentRx * s, centerY + (p.currentRy + Math.sin(now * 0.002 + p.rx) * 0.12) * s);
               ctx.stroke();
             }
           }
         }
-
-        // Apply velocities
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Add float noise
-        const floatY = Math.sin(now * 0.002 + p.originX) * 0.12;
-        
-        // Color configuration
-        let color = "#FFD93D"; // Pikachu Yellow base
+        p.currentRx += p.vx;
+        p.currentRy += p.vy;
+        const floatY = Math.sin(now * 0.002 + p.rx) * 0.12;
+        let color = "#FFD93D";
         if (p.isTail && tailCharging > 0) {
-          // tail flashes white/cyan
           color = Math.random() > 0.5 ? "#FFFFFF" : "#4FC3F7";
-        } else if (p.isTail && Math.sin(now * 0.005 + p.originX) > 0.8) {
-          // tail glows slightly cyan occasionally to show charge capacity
+        } else if (p.isTail && Math.sin(now * 0.005 + p.rx) > 0.8) {
           color = "#4FC3F7";
         }
-
-        // Draw particle
+        const breath = Math.sin(now * 0.0035 + p.rx * 0.1) * 0.18 + 0.82;
+        const pulse = mouse.active ? Math.max(0, 1 - (Math.sqrt((p.currentRx - relativeMouse.x)**2 + (p.currentRy - relativeMouse.y)**2) / 35)) * 0.5 : 0;
+        const activeAlpha = Math.min(1.0, p.alpha * breath + pulse);
+        const scaleFactor = (p.isTail && tailCharging > 0) ? (1 + tailCharging * 1.5) : 1;
+        const nodeSize = p.sizeRatio * size * scaleFactor * (breath + pulse * 0.5);
+        const px = centerX + p.currentRx * s;
+        const py = centerY + (p.currentRy + floatY) * s;
         ctx.save();
-        ctx.globalAlpha = p.alpha;
+        ctx.globalAlpha = activeAlpha;
         ctx.fillStyle = color;
-        ctx.shadowBlur = p.isTail && tailCharging > 0 ? 8 : 2;
+        ctx.shadowBlur = p.isTail && tailCharging > 0 ? 12 : 6;
         ctx.shadowColor = color;
         ctx.beginPath();
-        // Tail particles scale up during tail charge flash
-        const scaleFactor = (p.isTail && tailCharging > 0) ? (1 + tailCharging * 1.5) : 1;
-        ctx.arc(p.x, p.y + floatY, p.size * scaleFactor, 0, Math.PI * 2);
+        ctx.arc(px, py, nodeSize, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       });
 
-      // Update and Draw sparks
       for (let i = sparks.length - 1; i >= 0; i--) {
         const s = sparks[i];
         s.x += s.vx;
         s.y += s.vy;
-        s.alpha -= 0.022; // fade
-
+        s.alpha -= 0.022;
         if (s.alpha <= 0) {
           sparks.splice(i, 1);
           continue;
         }
-
         ctx.save();
         ctx.globalAlpha = s.alpha;
         ctx.fillStyle = s.color;
@@ -307,32 +390,41 @@ export const PikachuSilhouette: React.FC = () => {
         ctx.fill();
         ctx.restore();
       }
-
       frameId = requestAnimationFrame(tick);
     };
 
     frameId = requestAnimationFrame(tick);
 
     return () => {
-      canvas.removeEventListener("mousemove", handleMouseMove);
-      canvas.removeEventListener("mouseleave", handleMouseLeave);
-      canvas.removeEventListener("click", handleCanvasClick);
+      container.removeEventListener("mousemove", handleMouseMove);
+      container.removeEventListener("mouseleave", handleMouseLeave);
+      container.removeEventListener("click", handleCanvasClick);
+      resizeObserver.disconnect();
       cancelAnimationFrame(frameId);
     };
   }, []);
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center cursor-pointer group max-w-full overflow-hidden aspect-square">
-      {/* Visual bounding ring around silhouette */}
-      <div className="absolute w-[64%] h-[64%] sm:w-[290px] sm:h-[290px] rounded-full border border-white/5 bg-white/[0.01] pointer-events-none group-hover:border-[#FFD93D]/10 transition-colors duration-700" />
-      
-      {/* Scanning orbit rings */}
-      <div className="absolute w-[76%] h-[76%] sm:w-[330px] sm:h-[330px] rounded-full border border-dashed border-[#FFD93D]/10 pointer-events-none animate-[spin_50s_linear_infinite]" />
-      <div className="absolute w-[58%] h-[58%] sm:w-[250px] sm:h-[250px] rounded-full border border-dashed border-[#4FC3F7]/5 pointer-events-none animate-[spin_30s_linear_infinite_reverse]" />
-
+    <div
+      ref={containerRef}
+      className="relative w-full h-full flex items-center justify-center cursor-pointer group max-w-[500px] mx-auto overflow-hidden aspect-square"
+    >
+      <div 
+        className="absolute w-[64%] h-[64%] rounded-full border border-white/5 bg-white/[0.01] pointer-events-none group-hover:border-[#FFD93D]/10 transition-colors duration-700" 
+        style={{ transformOrigin: "center center" }} 
+      />
+      <div 
+        className="absolute w-[76%] h-[76%] rounded-full border border-dashed border-[#FFD93D]/10 pointer-events-none animate-[spin_50s_linear_infinite]" 
+        style={{ transformOrigin: "center center" }} 
+      />
+      <div 
+        className="absolute w-[58%] h-[58%] rounded-full border border-dashed border-[#4FC3F7]/5 pointer-events-none animate-[spin_30s_linear_infinite_reverse]" 
+        style={{ transformOrigin: "center center" }} 
+      />
       <canvas
         ref={canvasRef}
-        className="relative z-10 w-full sm:w-[380px] sm:h-[380px] block max-w-full aspect-square"
+        className="relative z-10 w-full h-full block aspect-square"
+        style={{ transformOrigin: "center center" }}
       />
     </div>
   );
