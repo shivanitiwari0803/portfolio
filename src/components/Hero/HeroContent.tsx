@@ -145,17 +145,20 @@ export const HeroContent: React.FC<HeroContentProps> = ({
             </motion.a>
 
             {/* Resume */}
-            <motion.a
-              href="/Shivani_Tiwari_Resume.pdf"
-              download="/resume/Shivani_Tiwari_Software_Engineer_Resume.pdf"
-              aria-label="Download Resume"
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-link btn-resume group flex items-center justify-center gap-2 px-4.5 py-3 rounded-full bg-white/[0.03] text-white font-semibold text-xs sm:text-sm border border-white/10 w-auto"
-            >
-              <FileText size={15} className="group-hover:text-[#FFD93D] transition-colors" />
-              <span>Resume</span>
-            </motion.a>
+           <motion.a
+  href="/resume/Shivani_Tiwari_Software_Engineer_Resume.pdf"
+  download="Shivani_Tiwari_Resume.pdf"
+  aria-label="Download Resume"
+  whileHover={{ scale: 1.05, y: -2 }}
+  whileTap={{ scale: 0.98 }}
+  className="btn-link btn-resume group flex items-center justify-center gap-2 px-4.5 py-3 rounded-full bg-white/[0.03] text-white font-semibold text-xs sm:text-sm border border-white/10 w-auto"
+>
+  <FileText
+    size={15}
+    className="group-hover:text-[#FFD93D] transition-colors"
+  />
+  <span>Resume</span>
+</motion.a>
 
             {/* Email */}
             <motion.a
