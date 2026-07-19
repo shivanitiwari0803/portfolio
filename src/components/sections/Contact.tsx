@@ -64,16 +64,6 @@ const CONTACT_CARDS: ContactCard[] = [
     ),
   },
   {
-    title: "LeetCode",
-    value: "shivanitwr0803",
-    href: "https://leetcode.com/u/shivanitwr0803/",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#FFA116]">
-        <path d="M13.483 0a1.374 1.374 0 00-.961.414L7.116 5.79a1.37 1.37 0 00-.415.953v1.402L1.267 13.56a3.834 3.834 0 000 5.437l1.737 1.737a3.834 3.834 0 005.437 0l5.416-5.416h1.402c.36 0 .707-.144.953-.415l5.376-5.376A1.377 1.377 0 0021.2 7.7a1.362 1.362 0 00-.961-.414h-2.671V4.615H13.48zM14.88 4.615h2.67v2.671H14.88zm-2.67 2.671h2.671v2.67H12.21zm-2.671 2.67h2.67v2.672h-2.67zm-2.67 2.672h2.67v2.67h-2.67zM14.07 14.88l-5.416 5.416a2.463 2.463 0 01-3.48 0l-1.738-1.738a2.463 2.463 0 010-3.48l5.417-5.417h1.4a1.377 1.377 0 00.962-.414l2.67-2.67v1.4c0 .36.145.707.414.953l2.672 2.671z" />
-      </svg>
-    ),
-  },
-  {
     title: "Resume",
     value: "Shivani_Tiwari_Resume.pdf",
     href: "/Shivani_Tiwari_Resume.pdf",
